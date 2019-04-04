@@ -1,10 +1,16 @@
 #include <omp.h>
 #include <stdio.h>
 #include <math.h>
+#include <iostream>
 
-#define ARRAYSIZE       1000000	// you decide
-#define NUMTRIES        100	// you decide
-#define N               1
+#define NUMT	          1
+#define ARRAYSIZE       100000	// you decide
+#define NUMTRIES        50	// you decide
+
+float A[ARRAYSIZE];
+float B[ARRAYSIZE];
+float C[ARRAYSIZE];
+using namespace std;
 
 int
 main( )
@@ -13,17 +19,9 @@ main( )
         fprintf( stderr, "OpenMP is not supported here -- sorry.\n" );
         return 1;
 #endif
-// float N[] = {1, 4};
-// double maxMegaMults[2] = {0., 0.};
-// for( int j = 0; j < 2; j++ )
-// {
-        float A[ARRAYSIZE];
-        float B[ARRAYSIZE];
-        float C[ARRAYSIZE];
 
-        // #define NUMT    N[j]
-        omp_set_num_threads( N );
-        fprintf( stderr, "Using %d threads\n", N );
+        omp_set_num_threads( NUMT );
+        fprintf( stderr, "Using %d threads\n", NUMT );
 
         double maxMegaMults = 0.;
 
@@ -42,14 +40,9 @@ main( )
                 if( megaMults > maxMegaMults )
                         maxMegaMults = megaMults;
         }
-
+        cout << "it ran...\n";
         printf( "Peak Performance = %8.2lf MegaMults/Sec\n", maxMegaMults );
-// }
-// double S = maxMegaMults[0]/maxMegaMults[1];
-// printf( "Speedup = %8.3lf \n", S );
-//
-// double Fp = (4./3.)*( 1. - (1./S) );
-// printf( "Parallel Fraction = %8.3lf\n", Fp );
+
 	// note: %lf stands for "long float", which is how printf prints a "double"
 	//        %d stands for "decimal integer", not "double"
 
