@@ -2,13 +2,9 @@
 #include <stdio.h>
 #include <math.h>
 
-#define NUMT	         4
 #define ARRAYSIZE       1000	// you decide
-#define NUMTRIES        1000	// you decide
+#define NUMTRIES        10	// you decide
 
-float A[ARRAYSIZE];
-float B[ARRAYSIZE];
-float C[ARRAYSIZE];
 
 int
 main( )
@@ -17,7 +13,13 @@ main( )
         fprintf( stderr, "OpenMP is not supported here -- sorry.\n" );
         return 1;
 #endif
-
+int N = 1, 4
+for( int j = 0; j = 1; j++ )
+{
+        float A[ARRAYSIZE];
+        float B[ARRAYSIZE];
+        float C[ARRAYSIZE];
+        #define NUMT N[j]
         omp_set_num_threads( NUMT );
         fprintf( stderr, "Using %d threads\n", NUMT );
 
@@ -36,11 +38,16 @@ main( )
                 double time1 = omp_get_wtime( );
                 double megaMults = (double)ARRAYSIZE/(time1-time0)/1000000.;
                 if( megaMults > maxMegaMults )
-                        maxMegaMults = megaMults;
+                        maxMegaMults[j] = megaMults[j];
         }
 
-        printf( "Peak Performance = %8.2lf MegaMults/Sec\n", maxMegaMults );
+        printf( "Peak Performance = %8.2lf MegaMults/Sec\n", maxMegaMults[j] );
+}
+double S = maxMegaMults[0]/maxMegaMults[1];
+printf( "Speedup = %8.3lf \n", S );
 
+double Fp = (4./3.)*( 1. - (1./S) );
+printf( "Parallel Fraction = %8.3lf\n", Fp );
 	// note: %lf stands for "long float", which is how printf prints a "double"
 	//        %d stands for "decimal integer", not "double"
 
