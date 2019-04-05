@@ -4,8 +4,8 @@
 #include <iostream>
 
 #define NUMT	          1
-#define ARRAYSIZE       100000	// you decide
-#define NUMTRIES        50	// you decide
+#define ARRAYSIZE       1000000	// you decide
+#define NUMTRIES        100	// you decide
 
 float A[ARRAYSIZE];
 float B[ARRAYSIZE];

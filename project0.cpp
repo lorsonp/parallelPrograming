@@ -4,7 +4,7 @@
 
 #define ARRAYSIZE       1000000	// you decide
 #define NUMTRIES        100	// you decide
-#define N               1
+#define N               4
 
 int
 main( )
