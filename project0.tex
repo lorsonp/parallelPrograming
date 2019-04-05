@@ -1,9 +1,108 @@
 % !TEX root = .\project0.tex
+
+
 \documentclass{article}
-\title{Project #0}
+\usepackage{listings}
+\usepackage{xcolor} % for setting colors
+\lstset{
+    frame=tb, % draw a frame at the top and bottom of the code block
+    tabsize=4, % tab space width
+    showstringspaces=false, % don't mark spaces in strings
+    numbers=left, % display line numbers on the left
+    commentstyle=\color{green}, % comment color
+    keywordstyle=\color{blue}, % keyword color
+    stringstyle=\color{red}} % string color
+\addtolength{\oddsidemargin}{-.875in}
+\addtolength{\evensidemargin}{-.875in}
+\addtolength{\textwidth}{1.75in}
+\addtolength{\topmargin}{-.875in}
+\addtolength{\textheight}{1.75in}
+\title{\textbf{ Project \textsuperscript \#0}}
 \author{Paige Lorson}
 \begin{document}
 \maketitle{}
-\section{Introduction}
-This is where you will write your content.
+\section*{Introduction}
+\quad A great use for parallel programming is identical operations on large arrays of numbers. The goal of this project is to test the multiplication of two vectors with different numbers of threads and comment on the results.
+
+\section*{Results}
+\quad The machine used to produce the following results is a HP Z240 SFF Workstation.
+The calculation was made with an ARRAYSIZE of 1,000,000 and a NUMTRIES of 100. This produced the following peak performance results.
+
+\begin{center}
+\begin{tabular}{r  |cl}
+1 Thread   & 4 Threads\\
+\hline
+509.27 MegaMults/Sec & 1927.64 MegaMults/Sec
+\end{tabular}
+\end{center}
+
+From these results the speedup, defined as the ratio of Execution time with one thread to the Execution time with four threads, is calculated to be
+$$S = 3.785 $$
+
+With the same amount of work divided amongst four workers, it may be expected to see a factor of 4x as the speedup. The difference between what was expected and the actual speedup may be attributed to the over head needed to setup four parallel threads.
+
+The Parallel Fraction for this test is found so be
+$$F_P =  0.981$$
+\newpage
+\section*{Appendix}
+
+\begin{lstlisting}[language=C++, caption={C++ code using listings}]
+#include <omp.h>
+#include <stdio.h>
+#include <math.h>
+
+#define ARRAYSIZE       1000000	// you decide
+#define NUMTRIES        100	// you decide
+#define N               1
+
+int
+main( )
+{
+#ifndef _OPENMP
+        fprintf( stderr, "OpenMP is not supported here -- sorry.\n" );
+        return 1;
+#endif
+// float N[] = {1, 4};
+// double maxMegaMults[2] = {0., 0.};
+// for( int j = 0; j < 2; j++ )
+// {
+        float A[ARRAYSIZE];
+        float B[ARRAYSIZE];
+        float C[ARRAYSIZE];
+
+        // #define NUMT    N[j]
+        omp_set_num_threads( N );
+        fprintf( stderr, "Using %d threads\n", N );
+
+        double maxMegaMults = 0.;
+
+        for( int t = 0; t < NUMTRIES; t++ )
+        {
+                double time0 = omp_get_wtime( );
+
+                #pragma omp parallel for
+                for( int i = 0; i < ARRAYSIZE; i++ )
+                {
+                        C[i] = A[i] * B[i];
+                }
+
+                double time1 = omp_get_wtime( );
+                double megaMults = (double)ARRAYSIZE/(time1-time0)/1000000.;
+                if( megaMults > maxMegaMults )
+                        maxMegaMults = megaMults;
+        }
+
+        printf( "Peak Performance = %8.2lf MegaMults/Sec\n", maxMegaMults );
+// }
+// double S = maxMegaMults[0]/maxMegaMults[1];
+// printf( "Speedup = %8.3lf \n", S );
+//
+// double Fp = (4./3.)*( 1. - (1./S) );
+// printf( "Parallel Fraction = %8.3lf\n", Fp );
+	// note: %lf stands for "long float", which is how printf prints a "double"
+	//        %d stands for "decimal integer", not "double"
+
+        return 0;
+}
+\end{lstlisting}
 \end{document}
