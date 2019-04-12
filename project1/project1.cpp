@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 
+
 // setting the number of threads:
 #ifndef NUMT
 #define NUMT		1
@@ -14,6 +15,11 @@
 // setting the number of trials in the monte carlo simulation:
 #ifndef NUMTRIALS
 #define NUMTRIALS	1000000
+#endif
+
+// setting the number of tries to discover the maximum performance:
+#ifndef NUMTRIES
+#define NUMTRIES	10
 #endif
 
 // ranges for the random numbers:
@@ -121,16 +127,20 @@ main( int argc, char *argv[ ] )
 
                   			// find out if it hits the infinite plate:
                   			float t = ( 0. - ycir ) / outy;
+												//IF  t is less than 0., then the reflected beam went up instead of down.
+												//Continue on to the next trial in the for-loop.
+												//Otherwise, this beam hit the infinite plate. (Case D) Increment the number
+												//of hits and continue on to the next trial in the for-loop.
                         if (t>0) {
-                          numHits = +1
+                          numHits = +1;
                         }
                       }
                     }
 
-//IF  t is less than 0., then the reflected beam went up instead of down.
-//Continue on to the next trial in the for-loop.
-//Otherwise, this beam hit the infinite plate. (Case D) Increment the number
-//of hits and continue on to the next trial in the for-loop.
+								//IF  t is less than 0., then the reflected beam went up instead of down.
+								//Continue on to the next trial in the for-loop.
+								//Otherwise, this beam hit the infinite plate. (Case D) Increment the number
+								//of hits and continue on to the next trial in the for-loop.
 
 
             		}
@@ -139,9 +149,11 @@ main( int argc, char *argv[ ] )
             		if( megaTrialsPerSecond > maxPerformance )
             			maxPerformance = megaTrialsPerSecond;
             		currentProb = (float)numHits/(float)NUMTRIALS;
-                ofstream f;
+							}
+
+                std::ofstream f;
                 f.open ("project1.txt");
-                f << NUMTRIES <<" "<< NUMT <<" "<< maxPerformance <<" "<< megaTrialsPerSecond<<" "<<currentProb <<"\n";
+                f << NUMTRIALS <<" "<< NUMT <<" "<< maxPerformance <<" "<< currentProb <<"\n";
                 f.close();
 
             	}
