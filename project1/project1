@@ -1,0 +1,16 @@
+#!/bin/bash
+
+for i in {1..8..1}
+do
+	for k in {100,1000,10000,100000,1000000}
+	do
+
+	echo $k $i
+	gcc -DNUMT=$i -DNUMTRIALS=$k -o proj1 project1.cpp -lm -fopenmp
+	./proj1
+
+	done
+done
+
+	
+

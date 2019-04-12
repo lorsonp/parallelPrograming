@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <iostream>
+#include <fstream>
 
 // setting the number of threads:
 #ifndef NUMT
@@ -138,4 +139,9 @@ main( int argc, char *argv[ ] )
             		if( megaTrialsPerSecond > maxPerformance )
             			maxPerformance = megaTrialsPerSecond;
             		currentProb = (float)numHits/(float)NUMTRIALS;
+                ofstream f;
+                f.open ("project1.txt");
+                f << NUMTRIES <<" "<< NUMT <<" "<< maxPerformance <<" "<< megaTrialsPerSecond<<" "<<currentProb <<"\n";
+                f.close();
+
             	}
