@@ -1,11 +1,11 @@
 #include <omp.h>
-#include <stdio.h>
+// #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
 #include <iostream>
 #include <fstream>
-#include <stdlib.h>
+// #include <stdlib.h>
 
 float
 Ranf( float low, float high )
@@ -46,7 +46,7 @@ TimeOfDaySeed( )
 
 // setting the number of trials in the monte carlo simulation:
 #ifndef NUMTRIALS
-#define NUMTRIALS	1000000
+#define NUMTRIALS	1000
 #endif
 
 // setting the number of tries to discover the maximum performance:
@@ -62,10 +62,10 @@ const float YCMAX =	 2.0;
 const float RMIN  =	 0.5;
 const float RMAX  =	 2.0;
 
-// function prototypes:
-float		Ranf( float, float );
-int		Ranf( int, int );
-void		TimeOfDaySeed( );
+// // function prototypes:
+// float		Ranf( float, float );
+// int		Ranf( int, int );
+// void		TimeOfDaySeed( );
 
 // main program:
 int
@@ -91,6 +91,8 @@ main( int argc, char *argv[ ] )
                 xcs[n] = Ranf( XCMIN, XCMAX );
                 ycs[n] = Ranf( YCMIN, YCMAX );
                 rs[n] = Ranf(  RMIN,  RMAX );
+								// std::cout << rs[n] << "\n";
+
         }
 
         // get ready to record the maximum performance and the probability:
@@ -104,22 +106,22 @@ main( int argc, char *argv[ ] )
 
                 int numHits = 0;
             		#pragma omp parallel for default(none) shared(xcs,ycs,rs) reduction(+:numHits)
-            		for( int n = 0; n < NUMTRIALS; n++ )
+            		for( int h = 0; h < NUMTRIALS; h++ )
             		{
                   			// randomize the location and radius of the circle:
-                  			float xc = xcs[n];
-                  			float yc = ycs[n];
-                  			float  r =  rs[n];
+                  			float xc = xcs[h];
+                  			float yc = ycs[h];
+                  			float  r =  rs[h];
 
                   			// solve for the intersection using the quadratic formula:
                   			float a = 2.;
                   			float b = -2.*( xc + yc );
                   			float c = xc*xc + yc*yc - r*r;
                   			float d = b*b - 4.*a*c;
-//IF d is less than 0., then the circle was completely missed.
-//(Case A) Continue on to the next trial in the for-loop.
+												//IF d is less than 0., then the circle was completely missed.
+												//(Case A) Continue on to the next trial in the for-loop.
 
-                        if (d<0) {
+                        if (d>0) {
                         // hits the circle:
                   			// get the first intersection:
                   			d = sqrt( d );
@@ -128,11 +130,9 @@ main( int argc, char *argv[ ] )
                   			float tmin = t1 < t2 ? t1 : t2;		// only care about the first intersection
 
                         if (tmin>0) {
-                          /* code */
 
-//IF tmin is less than 0., then the circle completely engulfs the laser pointer.
-//(Case B) Continue on to the next trial in the for-loop.
-
+												//IF tmin is less than 0., then the circle completely engulfs the laser pointer.
+												//(Case B) Continue on to the next trial in the for-loop.
 
                   			// where does it intersect the circle?
                   			float xcir = tmin;
@@ -158,34 +158,35 @@ main( int argc, char *argv[ ] )
                   			float outy = iny - 2.*ny*dot;	// angle of reflection = angle of incidence`
 
                   			// find out if it hits the infinite plate:
-                  			float t = ( 0. - ycir ) / outy;
+                  			float t_other = ( 0. - ycir ) / outy;
+
 												//IF  t is less than 0., then the reflected beam went up instead of down.
 												//Continue on to the next trial in the for-loop.
 												//Otherwise, this beam hit the infinite plate. (Case D) Increment the number
 												//of hits and continue on to the next trial in the for-loop.
-                        if (t>0) {
-                          numHits = +1;
-                        }
+                        if (t_other>0) {
+                          numHits += 1;
+												}
                       }
                     }
-
-								//IF  t is less than 0., then the reflected beam went up instead of down.
-								//Continue on to the next trial in the for-loop.
-								//Otherwise, this beam hit the infinite plate. (Case D) Increment the number
-								//of hits and continue on to the next trial in the for-loop.
-
-
-            		}
+	            		}
             		double time1 = omp_get_wtime( );
+								// printf("here %f \n",numHits);
             		double megaTrialsPerSecond = (double)NUMTRIALS / ( time1 - time0 ) / 1000000.;
             		if( megaTrialsPerSecond > maxPerformance )
             			maxPerformance = megaTrialsPerSecond;
-            		currentProb = (float)numHits/(float)NUMTRIALS;
-							}
+            		// float currentProb = (float)numHits/(float)NUMTRIALS;
+								// float fNumHits = numHits;
+								currentProb = (float)numHits/(float)NUMTRIALS;
+								// printf("----------------------------------------%f\n",numHits);
+								// printf("here %f %f %f \n",numHits,NUMTRIALS,(float)numHits/(float)NUMTRIALS;
 
-                std::ofstream f;
-                f.open ("project1.txt");
-                f << NUMTRIALS <<" "<< NUMT <<" "<< maxPerformance <<" "<< currentProb <<"\n";
-                f.close();
+							}
+							  int numHits=numHits;
+							  // printf("----------------------------------------  %i \n",numHits);
+							  printf("%d  %d  %f  %f \n", NUMTRIALS, NUMT, maxPerformance, currentProb);
+								FILE *f;
+								f = fopen("project1.txt","a");
+								fprintf(f,"%d  %d  %f  %f \n", NUMTRIALS, NUMT, maxPerformance, currentProb);
 
             	}
