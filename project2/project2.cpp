@@ -117,10 +117,11 @@ Height( int iu, int iv )	// iu,iv = 0 .. NUMNODES-1
         	float fullTileArea = (  ( ( XMAX - XMIN )/(float)(NUMNODES-1) )*
 																	( ( YMAX - YMIN )/(float)(NUMNODES-1) )  );
 					// printf("%f  \n",fullTileArea);
+	        float volume;
           for( int t = 0; t < NUMTRIES; t++ )
           {
                 double time0 = omp_get_wtime( );
-                float volume = 0;
+								volume = 0
                 #pragma omp parallel for collapse(2) default(none) shared(fullTileArea) reduction(+:volume)
                    for( int iv = 0; iv < NUMNODES; iv++ )
                    {
