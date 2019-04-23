@@ -121,7 +121,7 @@ Height( int iu, int iv )	// iu,iv = 0 .. NUMNODES-1
           {
                 double time0 = omp_get_wtime( );
                 float volume = 0;
-                #pragma omp parallel for collapse(2) default(none)  shared(fullTileArea) reduction(+:volume)
+                #pragma omp parallel for collapse(2) default(none) shared(fullTileArea) reduction(+:volume)
                    for( int iv = 0; iv < NUMNODES; iv++ )
                    {
                    	for( int iu = 0; iu < NUMNODES; iu++ )
@@ -147,7 +147,7 @@ Height( int iu, int iv )	// iu,iv = 0 .. NUMNODES-1
                  if( megaNodesPerSecond > maxPerformance )
                    maxPerformance = megaNodesPerSecond;
            }
-					 float volume=volume;
+					 // float volume=volume;
            printf("%d  %d  %f  %f \n", NUMNODES, NUMT, maxPerformance, volume);
            FILE *f;
            f = fopen("project2.txt","a");
