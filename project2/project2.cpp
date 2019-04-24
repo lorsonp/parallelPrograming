@@ -120,7 +120,7 @@ Height( int iu, int iv )	// iu,iv = 0 .. NUMNODES-1
           for( int t = 0; t < NUMTRIES; t++ )
           {
                 double time0 = omp_get_wtime( );
-								#pragma omp parallel for default(none)
+								#pragma omp parallel for default(none) shared(fullTileArea) reduction(+:volume)
 									for( int i = 0; i < NUMNODES*NUMNODES; i++ )
 									{
 										int iu = i % NUMNODES;
