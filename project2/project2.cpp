@@ -114,33 +114,28 @@ Height( int iu, int iv )	// iu,iv = 0 .. NUMNODES-1
 
         	// the area of a single full-sized tile:
 
-        	float fullTileArea = (  ( ( XMAX - XMIN )/(float)(NUMNODES-1) )*
+					float fullTileArea = (  ( ( XMAX - XMIN )/(float)(NUMNODES-1) )*
 																	( ( YMAX - YMIN )/(float)(NUMNODES-1) )  );
 					// printf("%f  \n",fullTileArea);
 	        float volume;
           for( int t = 0; t < NUMTRIES; t++ )
           {
                 double time0 = omp_get_wtime( );
-								volume = 0
                 #pragma omp parallel for collapse(2) default(none) shared(fullTileArea) reduction(+:volume)
                    for( int iv = 0; iv < NUMNODES; iv++ )
                    {
                    	for( int iu = 0; iu < NUMNODES; iu++ )
                    	{
                       float h = Height( iv , iu );
+											float A = fullTileArea;
                       if (iv == 0 || iv == NUMNODES-1 || iu == 0 || iu == NUMNODES-1) {
-                        float A = fullTileArea*0.5;
+                        float A = A*0.5;
                         if ((iv == 0 || iv == NUMNODES-1) && (iu == 0 || iu == NUMNODES-1)) {
                            A = A*0.5;
 													 // printf("corner");
                          }
-                        volume += A*h;
-												// printf("%f  %f  %f \n",A,h,volume);
-
-                      } else {
-                        volume += fullTileArea*h;
                       }
-
+                        volume += A*h;
                    	}
                    }
                  double time1 = omp_get_wtime( );
