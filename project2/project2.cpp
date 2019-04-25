@@ -116,25 +116,26 @@ Height( int iu, int iv )	// iu,iv = 0 .. NUMNODES-1
 
 					float fullTileArea = (  ( ( XMAX - XMIN )/(float)(NUMNODES-1) )*
 																	( ( YMAX - YMIN )/(float)(NUMNODES-1) )  );
-	        float volume;
+	        float volume = 0;
+					// float vol;
           for( int t = 0; t < (float)NUMTRIES; t++ )
-          {
+          {			float vol = 0;
                 double time0 = omp_get_wtime( );
-								#pragma omp parallel for default(none) shared(fullTileArea) reduction(+:volume)
+								#pragma omp parallel for default(none) shared(fullTileArea) reduction(+:vol)
 									for( int i = 0; i < (int)NUMNODES*(int)NUMNODES; i++ )
 									{
 										int iu = i % (int)NUMNODES;
 										int iv = i / (int)NUMNODES;
-										float h = Height( iv , iu );
-										float A = fullTileArea;
+										float h = Height( iu , iv );
+										float n = 1;
 										if (iv == 0 || iv == (int)NUMNODES-1 || iu == 0 || iu == (int)NUMNODES-1) {
-											float A = A*0.5;
+											float n = 0.5;
 											if ((iv == 0 || iv == (int)NUMNODES-1) && (iu == 0 || iu == (int)NUMNODES-1)) {
-												 A = A*0.5;
+												 n = 0.25;
 												 // printf("corner");
 											 }
 										}
-											volume += A*h;
+											vol += fullTileArea*h*n;
 									}
 
 
@@ -155,10 +156,12 @@ Height( int iu, int iv )	// iu,iv = 0 .. NUMNODES-1
                    //      volume += A*h;
                    // 	}
                    // }
+								 volume = vol;
                  double time1 = omp_get_wtime( );
                  double megaNodesPerSecond = (double)NUMNODES*(double)NUMNODES / ( time1 - time0 ) / 1000000.;
                  if( megaNodesPerSecond > maxPerformance )
                    maxPerformance = megaNodesPerSecond;
+
            }
            printf("%d  %d  %f  %f \n", NUMNODES, NUMT, maxPerformance, volume);
            FILE *f;
