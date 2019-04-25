@@ -122,15 +122,15 @@ Height( int iu, int iv )	// iu,iv = 0 .. NUMNODES-1
           {			float vol = 0;
                 double time0 = omp_get_wtime( );
 								#pragma omp parallel for default(none) shared(fullTileArea) reduction(+:vol)
-									for( int i = 0; i < (int)NUMNODES*(int)NUMNODES; i++ )
+									for( int i = 0; i < (float)NUMNODES*(float)NUMNODES; i++ )
 									{
-										int iu = i % (int)NUMNODES;
-										int iv = i / (int)NUMNODES;
+										int iu = i % (float)NUMNODES;
+										int iv = i / (float)NUMNODES;
 										float h = Height( iu , iv );
 										float n = 1;
-										if (iv == 0 || iv == (int)NUMNODES-1 || iu == 0 || iu == (int)NUMNODES-1) {
+										if (iv == 0 || iv == (float)NUMNODES-1 || iu == 0 || iu == (float)NUMNODES-1) {
 											float n = 0.5;
-											if ((iv == 0 || iv == (int)NUMNODES-1) && (iu == 0 || iu == (int)NUMNODES-1)) {
+											if ((iv == 0 || iv == (float)NUMNODES-1) && (iu == 0 || iu == (float)NUMNODES-1)) {
 												 n = 0.25;
 												 // printf("corner");
 											 }
