@@ -120,25 +120,23 @@ Height( int iu, int iv )	// iu,iv = 0 .. NUMNODES-1
 					// float vol;
           for( int t = 0; t < (float)NUMTRIES; t++ )
           {			float vol = 0;
-                double time0 = omp_get_wtime( );
+								double time0 = omp_get_wtime( );
 								#pragma omp parallel for default(none) shared(fullTileArea) reduction(+:vol)
-									for( int i = 0; i < (float)NUMNODES*(float)NUMNODES; i++ )
+									for( int i = 0; i < NUMNODES*NUMNODES; i++ )
 									{
-										int iu = i % (float)NUMNODES;
-										int iv = i / (float)NUMNODES;
+										int iu = i % NUMNODES;
+										int iv = i / NUMNODES;
 										float h = Height( iu , iv );
 										float n = 1;
-										if (iv == 0 || iv == (float)NUMNODES-1 || iu == 0 || iu == (float)NUMNODES-1) {
+										if (iv == 0 || iv == NUMNODES-1 || iu == 0 || iu == NUMNODES-1) {
 											float n = 0.5;
-											if ((iv == 0 || iv == (float)NUMNODES-1) && (iu == 0 || iu == (float)NUMNODES-1)) {
+											if ((iv == 0 || iv == NUMNODES-1) && (iu == 0 || iu == NUMNODES-1)) {
 												 n = 0.25;
 												 // printf("corner");
 											 }
 										}
 											vol += fullTileArea*h*n;
-									}
-
-
+									 }
                 // #pragma omp parallel for collapse(2) default(none) shared(fullTileArea) reduction(+:volume)
                    // for( int iv = 0; iv < NUMNODES; iv++ )
                    // {
@@ -155,7 +153,7 @@ Height( int iu, int iv )	// iu,iv = 0 .. NUMNODES-1
                    //    }
                    //      volume += A*h;
                    // 	}
-                   // }
+
 								 volume = vol;
                  double time1 = omp_get_wtime( );
                  double megaNodesPerSecond = (double)NUMNODES*(double)NUMNODES / ( time1 - time0 ) / 1000000.;
@@ -163,7 +161,7 @@ Height( int iu, int iv )	// iu,iv = 0 .. NUMNODES-1
                    maxPerformance = megaNodesPerSecond;
 
            }
-           printf("%d  %d  %f  %f \n", NUMNODES, NUMT, maxPerformance, volume);
+           // printf("%d  %d  %f  %f \n", NUMNODES, NUMT, maxPerformance, volume);
            FILE *f;
            f = fopen("project2.txt","a");
            fprintf(f,"%d  %d  %f  %f \n", NUMNODES, NUMT, maxPerformance, volume);

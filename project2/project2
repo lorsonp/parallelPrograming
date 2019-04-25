@@ -2,7 +2,7 @@
 
 for i in {1..8..1}
 do
-	for k in {100...1500...100}
+	for k in {50..1000..50}
 	do
 
 	echo $k $i
