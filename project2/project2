@@ -2,7 +2,15 @@
 
 for i in {1..8..1}
 do
-	for k in {50..1000..50}
+	for k in {5..50..5}
+	do
+
+	echo $k $i
+	g++ -DNUMT=$i -DNUMNODES=$k -o proj2 project2.cpp -lm -fopenmp
+	./proj2
+
+	done
+	for k in {100..1000..100}
 	do
 
 	echo $k $i
