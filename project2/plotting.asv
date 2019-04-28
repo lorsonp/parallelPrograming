@@ -1,10 +1,3 @@
-Dr. Bailley,  
-For project 2 I am seeing very little effect of number of nodes on the performance results. I am currently varying the number of nodes from 50 to 1000. In this a large enough range or should I include more be able to see the effect of overhead?
-
-
-
-
-
 %% Plotting for project 1
 % Paige Lorson
 % Parallel Programming
@@ -15,25 +8,25 @@ clc
 
 %% Import data
 addpath('C:\Users\Paige\Documents\MATLAB\myFunctions')
-data = importdata('project1.txt',' ');
+data = importdata('project2.txt',' ');
 save('data.mat','data')
 NUMTRIALS = data(:,1);
 NUMT = data(:,2);
 maxPerformance = data(:,3);
-currentProb = data(:,4);
+volume = data(:,4);
 
 %% Present data
 
 tabPerf = zeros(9,6);
 tabPerf(1,2:end) = NUMTRIALS(1:5);
 tabPerf(:,1) = (0:8)';
-tabProb = tabPerf;
+tabVol = tabPerf;
 tabSpeedup = tabPerf;
 tabFp = tabPerf;
 L = 1;
 for i = 2:9 %loop through threads
     tabPerf(i,2:end) = maxPerformance(L:4+L)';
-    tabProb(i,2:end) = currentProb(L:4+L)';
+    tabVol(i,2:end) = volume(L:4+L)';
     L = L+5;
 end
 tabSpeedup(2:end,2:end) = tabPerf(2:end,2:end)./tabPerf(2,2:end);
@@ -76,10 +69,10 @@ fig3 = figure(3);
 set(fig3,'units','normalized','outerposition',[0 0 0.75 1]);
 hold on
 for i = 2:9
-plot(tabProb(1,2:end),tabProb(i,2:end),'Color',c(i,:),'LineStyle','-','LineWidth',3)
+plot(tabVol(1,2:end),tabVol(i,2:end),'Color',c(i,:),'LineStyle','-','LineWidth',3)
 end
-plot([tabProb(1,2),tabProb(1,end)],[tabProb(i,end),tabProb(i,end)],'--k','LineWidth',4)
-disp(tabProb(i,end))
+plot([tabVol(1,2),tabVol(1,end)],[tabVol(i,end),tabVol(i,end)],'--k','LineWidth',4)
+disp(tabVol(i,end))
 set(gca,'LineWidth',0.5,'FontSize',12,'FontName','Times New Roman','XScale','log') 
 xlabel('Trials','FontSize',18)
 ylabel('Probability','FontSize',18)
