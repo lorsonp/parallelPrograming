@@ -13,10 +13,14 @@ int	NowMonth;		// 0 - 11
 float	NowPrecip;		// inches of rain per month
 float	NowTemp;		// temperature this month
 float	NowHeight;		// grain height in inches
+float Income;			// income based on the harvested grain height
 int	NowNumDeer;		// number of deer in the current population
 
 const float GRAIN_GROWS_PER_MONTH =		8.0;
 const float ONE_DEER_EATS_PER_MONTH =		0.5;
+const float HARVESTED_HEIGHT = 8.0;
+const float HARVEST_HEIGHT =  24.0;
+const float COST_OF_GRAIN_PER_INCH =  9;
 
 const float AVG_PRECIP_PER_MONTH =		6.0;	// average
 const float AMP_PRECIP_PER_MONTH =		6.0;	// plus or minus
@@ -32,7 +36,7 @@ const float MIDPRECIP =				10.0;
 // starting date and time:
 NowMonth =    0;
 NowYear  = 2019;
-
+Income = 0;
 // starting state (feel free to change this if you want):
 NowNumDeer = 1;
 NowHeight =  1.;
@@ -71,6 +75,10 @@ omp_set_num_threads( 4 );	// same as # of sections
 
 				NewHeight = NowHeight + tempFactor * precipFactor * GRAIN_GROWS_PER_MONTH;
 				NewHeight = NowHeight - (float)NowNumDeer * ONE_DEER_EATS_PER_MONTH;
+				if  (NowHeight>HARVEST_HEIGHT) {
+					Income += (NowHeight - HARVESTED_HEIGHT)*COST_OF_GRAIN_PER_INCH;
+					NewHeight = HARVESTED_HEIGHT;
+				}
 				if (NowHeight<0) {
 					NowHeight = 0;
 				}
@@ -107,13 +115,32 @@ omp_set_num_threads( 4 );	// same as # of sections
 				NowPrecip = precip + Ranf( &seed,  -RANDOM_PRECIP, RANDOM_PRECIP );
 				if( NowPrecip < 0. )
 					NowPrecip = 0.;
+
+
+				FILE *f;
+				f = fopen("project2.txt","a");
+				fprintf(f,"%d  %d  %f  %f  %f  %d  %f \n", NowYear, NowMonth, NowTemp, NowPrecip, NowHeight, NowNumDeer, Income);
+				// DonePrinting barrier:
+				#pragma omp barrier
 			}
 	}
 
-	#pragma omp section
-	{
-		MyAgent( );	// your own
+		#pragma omp section
+		{
+			while( NowYear < 2025 ){
+				// MyAgent( );	// Harvest
+
+				// DoneComputing barrier:
+				#pragma omp barrier
+
+				// DoneAssigning barrier:
+				#pragma omp barrier
+
+				// DonePrinting barrier:
+				#pragma omp barrier
+			}
 	}
 }       // implied barrier -- all functions must return in order
-	// to allow any of them to get past here
+				// to allow any of them to get past here
+return 0;
 }
