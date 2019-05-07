@@ -195,15 +195,15 @@ int main(){
 		{
 			while( NowYear < 2025 ){
 					// Watcher( );
-
+					printf("Computing");
 					// DoneComputing barrier:
 					WaitBarrier( );
-
+					printf("Done Computing");
 					// DoneAssigning barrier:
 					WaitBarrier( );
-
+					printf("Done Assigning");
 					FILE *f;
-					f = fopen("project2.txt","a");
+					f = fopen("project3.txt","a");
 					fprintf(f,"%d  %d  %f  %f  %f  %d  %f \n", NowYear, NowMonth, NowTemp, NowPrecip, NowHeight, NowNumDeer, Income);
 					NowYear+=1;
 					// DonePrinting barrier:
