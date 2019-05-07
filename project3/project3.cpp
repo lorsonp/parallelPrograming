@@ -155,6 +155,17 @@ int main(){
 		{
 			while( NowYear < 2025 ){
 					// Grain( );
+					float ang = (  30.*(float)NowMonth + 15.  ) * ( M_PI / 180. );
+
+					float temp = AVG_TEMP - AMP_TEMP * cos( ang );
+					unsigned int seed = 0;
+					NowTemp = temp + Ranf( &seed, -RANDOM_TEMP, RANDOM_TEMP );
+
+					float precip = AVG_PRECIP_PER_MONTH + AMP_PRECIP_PER_MONTH * sin( ang );
+					NowPrecip = precip + Ranf( &seed,  -RANDOM_PRECIP, RANDOM_PRECIP );
+					if( NowPrecip < 0. )
+						{NowPrecip = 0.;}
+
 					float tempFactor = exp(   -SQR(  ( NowTemp - MIDTEMP ) / 10.  )   );
 			    float precipFactor = exp(   -SQR(  ( NowPrecip - MIDPRECIP ) / 10.  )   );
 
@@ -190,21 +201,11 @@ int main(){
 
 					// DoneAssigning barrier:
 					WaitBarrier( );
-					float ang = (  30.*(float)NowMonth + 15.  ) * ( M_PI / 180. );
-
-					float temp = AVG_TEMP - AMP_TEMP * cos( ang );
-					unsigned int seed = 0;
-					NowTemp = temp + Ranf( &seed, -RANDOM_TEMP, RANDOM_TEMP );
-
-					float precip = AVG_PRECIP_PER_MONTH + AMP_PRECIP_PER_MONTH * sin( ang );
-					NowPrecip = precip + Ranf( &seed,  -RANDOM_PRECIP, RANDOM_PRECIP );
-					if( NowPrecip < 0. )
-						{NowPrecip = 0.;}
-
 
 					FILE *f;
 					f = fopen("project2.txt","a");
 					fprintf(f,"%d  %d  %f  %f  %f  %d  %f \n", NowYear, NowMonth, NowTemp, NowPrecip, NowHeight, NowNumDeer, Income);
+					NowYear+=1;
 					// DonePrinting barrier:
 					WaitBarrier( );
 				}
