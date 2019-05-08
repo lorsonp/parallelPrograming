@@ -176,7 +176,7 @@ int main(){
 						NewHeight = HARVESTED_HEIGHT;
 					}
 					if (NowHeight<0) {
-						NowHeight = 0;
+						NewHeight = 0;
 					}
 
 					// DoneComputing barrier:
