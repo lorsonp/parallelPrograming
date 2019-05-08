@@ -13,8 +13,8 @@ float	NowTemp;		// temperature this month
 float	NowHeight;		// grain height in inches
 float Income;
 
-const float GRAIN_GROWS_PER_MONTH =		8.0;
-const float ONE_DEER_EATS_PER_MONTH =		0.5;
+const float GRAIN_GROWS_PER_MONTH =		9.0;
+const float ONE_DEER_EATS_PER_MONTH =		0.3;
 const float HARVESTED_HEIGHT = 8.0;
 const float HARVEST_HEIGHT =  24.0;
 const float COST_OF_GRAIN_PER_INCH =  9;
@@ -64,6 +64,13 @@ void GrainDeer()
     else
     {
       NewNumDeer = NowNumDeer + 1;
+    }
+    if ((float)NowHeight<(float)NowNumDeer) {
+      NewNumDeer = NowNumDeer - 1;
+    } else if ((float)NowHeight>(float)NowNumDeer) {
+      NewNumDeer = NowNumDeer + 1;
+    } else {
+      NewNumDeer = NowNumDeer;
     }
     // DoneComputing barrier:
     #pragma omp barrier
