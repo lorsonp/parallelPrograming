@@ -141,14 +141,14 @@ int main(){
 		  		NewNumDeer = NowNumDeer;
 			}
 			// DoneComputing barrier:
-			WaitBarrier( );
+			#pragma omp barrier
 			NowNumDeer = NewNumDeer;
 
 			// DoneAssigning barrier:
-			WaitBarrier( );
+			#pragma omp barrier
 
 			// DonePrinting barrier:
-			WaitBarrier( );
+			#pragma omp barrier
 		}
 
 		#pragma omp section
@@ -180,14 +180,14 @@ int main(){
 					}
 
 					// DoneComputing barrier:
-					WaitBarrier( );
+					#pragma omp barrier
 					NowHeight = NewHeight;
 
 					// DoneAssigning barrier:
-					WaitBarrier( );
+					#pragma omp barrier
 
 					// DonePrinting barrier:
-					WaitBarrier( );
+					#pragma omp barrier
 				}
 		}
 
@@ -197,17 +197,17 @@ int main(){
 					// Watcher( );
 					printf("Computing");
 					// DoneComputing barrier:
-					WaitBarrier( );
+					#pragma omp barrier
 					printf("Done Computing");
 					// DoneAssigning barrier:
-					WaitBarrier( );
+					#pragma omp barrier
 					printf("Done Assigning");
 					FILE *f;
 					f = fopen("project3.txt","a");
 					fprintf(f,"%d  %d  %f  %f  %f  %d  %f \n", NowYear, NowMonth, NowTemp, NowPrecip, NowHeight, NowNumDeer, Income);
 					NowYear+=1;
 					// DonePrinting barrier:
-					WaitBarrier( );
+					#pragma omp barrier
 				}
 		}
 
@@ -217,13 +217,13 @@ int main(){
 					// MyAgent( );	// Harvest
 
 					// DoneComputing barrier:
-					WaitBarrier( );
+					#pragma omp barrier
 
 					// DoneAssigning barrier:
-					WaitBarrier( );
+					#pragma omp barrier
 
 					// DonePrinting barrier:
-					WaitBarrier( );
+					#pragma omp barrier
 				}
 		}
 	}       // implied barrier -- all functions must return in order
