@@ -105,7 +105,7 @@ void Grain()
         Income += (NowHeight - HARVESTED_HEIGHT)*COST_OF_GRAIN_PER_INCH;
         NewHeight = HARVESTED_HEIGHT;
       }
-      if (NowHeight<0) {
+      if (NewHeight=<0) {
         NewHeight = 0;
       }
 
@@ -136,7 +136,10 @@ void Watcher()
       #pragma omp barrier
       printf("Done Assigning");
       fprintf(f,"%d  %d  %f  %f  %f  %d  %f \n", NowYear, NowMonth, NowTemp, NowPrecip, NowHeight, NowNumDeer, Income);
-      NowYear+=1;
+      NowMonth += 1;
+      if (NowMonth=12) {
+        NowYear+=1;
+        NowMonth = 0;
       // DonePrinting barrier:
       #pragma omp barrier
     }
