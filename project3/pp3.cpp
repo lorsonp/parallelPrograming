@@ -5,20 +5,13 @@
 #include <iostream>
 #include <fstream>
 
-int		NumInThreadTeam;
-int		NumAtBarrier;
-int		NumGone;
-
 int	NowYear;		// 2019 - 2024
 int	NowMonth;		// 0 - 11
 int	NowNumDeer;		// number of deer in the current population
-int NewNumDeer;
-
 float	NowPrecip;		// inches of rain per month
 float	NowTemp;		// temperature this month
 float	NowHeight;		// grain height in inches
-float	NewHeight;		// grain height in inches
-float Income;			// income based on the harvested grain height
+float Income;
 
 const float GRAIN_GROWS_PER_MONTH =		8.0;
 const float ONE_DEER_EATS_PER_MONTH =		0.5;
@@ -37,11 +30,12 @@ const float RANDOM_TEMP =			10.0;	// plus or minus noise
 const float MIDTEMP =				40.0;
 const float MIDPRECIP =				10.0;
 
-
 float
-SQR( float x )
+Ranf( unsigned int *seedp,  float low, float high )
 {
-        return x*x;
+        float r = (float) rand_r( seedp );              // 0 - RAND_MAX
+
+        return(   low  +  r * ( high - low ) / (float)RAND_MAX   );
 }
 
 int
@@ -49,40 +43,52 @@ Ranf( unsigned int *seedp, int ilow, int ihigh )
 {
         float low = (float)ilow;
         float high = (float)ihigh + 0.9999f;
-
         return (int)(  Ranf(seedp, low,high) );
+}
+
+float
+SQR( float x )
+{
+        return x*x;
 }
 
 void GrainDeer()
 {
+  int NewNumDeer;
+  while(NowYear<2025)
+  {
     if (NowHeight>NowNumDeer)
     {
       NewNumDeer = NowNumDeer - 1;
-  }
-  else if (NowHeight<NowNumDeer)
-  {
+    }
+    else if (NowHeight<NowNumDeer)
+    {
       NewNumDeer = NowNumDeer + 1;
-  } else {
+    }
+    else {
       NewNumDeer = NowNumDeer;
+    }
+    // DoneComputing barrier:
+    #pragma omp barrier
+    NowNumDeer = NewNumDeer;
+    // DoneAssigning barrier:
+    #pragma omp barrier
+
+    // DonePrinting barrier:
+    #pragma omp barrier
   }
-  // DoneComputing barrier:
-  #pragma omp barrier
-  NowNumDeer = NewNumDeer;
-
-  // DoneAssigning barrier:
-  #pragma omp barrier
-
-  // DonePrinting barrier:
-  #pragma omp barrier
 }
 
 void Grain()
 {
+  float	NewHeight;		// grain height in inches
+
   while( NowYear < 2025 ){
       // Grain( );
       float ang = (  30.*(float)NowMonth + 15.  ) * ( M_PI / 180. );
       float temp = AVG_TEMP - AMP_TEMP * cos( ang );
       unsigned int seed = 0;
+
       NowTemp = temp + Ranf( &seed, -RANDOM_TEMP, RANDOM_TEMP );
 
       float precip = AVG_PRECIP_PER_MONTH + AMP_PRECIP_PER_MONTH * sin( ang );
@@ -96,17 +102,13 @@ void Grain()
       NewHeight = NowHeight + tempFactor * precipFactor * GRAIN_GROWS_PER_MONTH;
       NewHeight = NowHeight - (float)NowNumDeer * ONE_DEER_EATS_PER_MONTH;
       if  (NowHeight>HARVEST_HEIGHT) {
-        float NewIncome = Income + (NowHeight - HARVESTED_HEIGHT)*COST_OF_GRAIN_PER_INCH;
+        Income += (NowHeight - HARVESTED_HEIGHT)*COST_OF_GRAIN_PER_INCH;
         NewHeight = HARVESTED_HEIGHT;
       }
-      else {
-          float NewIncome = 0;
-         }
-
       if (NowHeight<0) {
         NewHeight = 0;
-        Income = NewIncome;
       }
+
       // DoneComputing barrier:
       #pragma omp barrier
       NowHeight = NewHeight;
@@ -121,6 +123,9 @@ void Grain()
 
 void Watcher()
 {
+  FILE *f;
+  f = fopen("project3.txt","a");
+
   while( NowYear < 2025 ){
       // Watcher( );
       printf("Computing");
@@ -130,9 +135,7 @@ void Watcher()
       // DoneAssigning barrier:
       #pragma omp barrier
       printf("Done Assigning");
-      // FILE *f;
-      // f = fopen("project3.txt","a");
-      // fprintf(f,"%d  %d  %f  %f  %f  %d  %f \n", NowYear, NowMonth, NowTemp, NowPrecip, NowHeight, NowNumDeer, Income);
+      fprintf(f,"%d  %d  %f  %f  %f  %d  %f \n", NowYear, NowMonth, NowTemp, NowPrecip, NowHeight, NowNumDeer, Income);
       NowYear+=1;
       // DonePrinting barrier:
       #pragma omp barrier
@@ -149,13 +152,13 @@ int main(){
 	// starting date and time:
 	NowMonth =    0;
 	NowYear  = 2019;
-	Income = 0;
+  Income = 0;			// income based on the harvested grain height
 	// starting state (feel free to change this if you want):
 	NowNumDeer = 1;
 	NowHeight =  1.;
 
 	omp_set_num_threads( 3 );	// same as # of sections
-	#pragma omp parallel sections
+	#pragma omp parallel sections default(none)
 	{
 		#pragma omp section
 		{
@@ -174,22 +177,5 @@ int main(){
 			Watcher();
 		}
 
-		// 	#pragma omp section
-		// 	{
-		// 		while( NowYear < 2025 ){
-		// 			// MyAgent( );	// Harvest
-    //
-		// 			// DoneComputing barrier:
-		// 			#pragma omp barrier
-    //
-		// 			// DoneAssigning barrier:
-		// 			#pragma omp barrier
-    //
-		// 			// DonePrinting barrier:
-		// 			#pragma omp barrier
-		// 		}
-		// }
-	}       // implied barrier -- all functions must return in order
-					// to allow any of them to get past here
-	return 0;
+	}
 }
