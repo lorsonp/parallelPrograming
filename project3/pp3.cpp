@@ -99,11 +99,14 @@ void Grain()
         float NewIncome = Income + (NowHeight - HARVESTED_HEIGHT)*COST_OF_GRAIN_PER_INCH;
         NewHeight = HARVESTED_HEIGHT;
       }
+      else {
+          float NewIncome = 0;
+         }
+
       if (NowHeight<0) {
         NewHeight = 0;
         Income = NewIncome;
       }
-
       // DoneComputing barrier:
       #pragma omp barrier
       NowHeight = NewHeight;
