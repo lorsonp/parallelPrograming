@@ -105,7 +105,7 @@ void Grain()
       float precipFactor = exp(   -SQR(  ( NowPrecip - MIDPRECIP ) / 10.  )   );
 
       NewHeight = NowHeight + tempFactor * precipFactor * GRAIN_GROWS_PER_MONTH;
-      NewHeight = NowHeight - (float)NowNumDeer * ONE_DEER_EATS_PER_MONTH;
+      NewHeight = NewHeight - (float)NowNumDeer * ONE_DEER_EATS_PER_MONTH;
       if  (NowHeight>HARVEST_HEIGHT) {
         Income += (NowHeight - HARVESTED_HEIGHT)*COST_OF_GRAIN_PER_INCH;
         NewHeight = HARVESTED_HEIGHT;
