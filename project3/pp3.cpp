@@ -57,16 +57,13 @@ void GrainDeer()
   int NewNumDeer;
   while(NowYear<2025)
   {
-    if (NowHeight>NowNumDeer)
+    if ((float)NowHeight>=NowNumDeer)
     {
       NewNumDeer = NowNumDeer - 1;
     }
-    else if (NowHeight<NowNumDeer)
+    else
     {
       NewNumDeer = NowNumDeer + 1;
-    }
-    else {
-      NewNumDeer = NowNumDeer;
     }
     // DoneComputing barrier:
     #pragma omp barrier
