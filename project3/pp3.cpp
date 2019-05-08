@@ -57,7 +57,7 @@ void GrainDeer()
   int NewNumDeer;
   while(NowYear<2025)
   {
-    if ((float)NowHeight>=NowNumDeer)
+    if ((float)NowHeight<(float)NowNumDeer)
     {
       NewNumDeer = NowNumDeer - 1;
     }
