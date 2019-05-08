@@ -128,13 +128,13 @@ void Watcher()
 
   while( NowYear < 2025 ){
       // Watcher( );
-      printf("Computing");
+      printf("Computing \n");
       // DoneComputing barrier:
       #pragma omp barrier
-      printf("Done Computing");
+      printf("Done Computing \n");
       // DoneAssigning barrier:
       #pragma omp barrier
-      printf("Done Assigning");
+      printf("Done Assigning \n");
       fprintf(f,"%d  %d  %f  %f  %f  %d  %f \n", NowYear, NowMonth, NowTemp, NowPrecip, NowHeight, NowNumDeer, Income);
       NowMonth += 1;
       if (NowMonth=12) {
