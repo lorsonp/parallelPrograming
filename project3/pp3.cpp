@@ -137,7 +137,9 @@ void Watcher()
       printf("Done Assigning \n");
       fprintf(f,"%d  %d  %f  %f  %f  %d  %f \n", NowYear, NowMonth, NowTemp, NowPrecip, NowHeight, NowNumDeer, Income);
       NowMonth += 1;
+      printf("%d \n",NowMonth);
       if (NowMonth=12) {
+        printf("here\n");
         NowYear+=1;
         NowMonth = 0;
        }
