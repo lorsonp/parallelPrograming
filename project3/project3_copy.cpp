@@ -130,7 +130,7 @@ int main(){
 	#pragma omp parallel sections shared(NowHeight,NowNumDeer,NowYear,NowMonth,Income)
 	{
 		#pragma omp section
-		{
+		{ while( NowYear < 2025 ){
 			// GrainDeer( );
 
 				if (NowHeight>NowNumDeer) {
@@ -149,7 +149,7 @@ int main(){
 
 			// DonePrinting barrier:
 			#pragma omp barrier
-		}
+		}}
 
 		#pragma omp section
 		{
