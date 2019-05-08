@@ -140,6 +140,7 @@ void Watcher()
       if (NowMonth=12) {
         NowYear+=1;
         NowMonth = 0;
+       }
       // DonePrinting barrier:
       #pragma omp barrier
     }
