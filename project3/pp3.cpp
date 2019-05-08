@@ -20,7 +20,6 @@ float	NowHeight;		// grain height in inches
 float	NewHeight;		// grain height in inches
 float Income;			// income based on the harvested grain height
 
-
 const float GRAIN_GROWS_PER_MONTH =		8.0;
 const float ONE_DEER_EATS_PER_MONTH =		0.5;
 const float HARVESTED_HEIGHT = 8.0;
@@ -97,11 +96,12 @@ void Grain()
       NewHeight = NowHeight + tempFactor * precipFactor * GRAIN_GROWS_PER_MONTH;
       NewHeight = NowHeight - (float)NowNumDeer * ONE_DEER_EATS_PER_MONTH;
       if  (NowHeight>HARVEST_HEIGHT) {
-        Income += (NowHeight - HARVESTED_HEIGHT)*COST_OF_GRAIN_PER_INCH;
+        float NewIncome = Income + (NowHeight - HARVESTED_HEIGHT)*COST_OF_GRAIN_PER_INCH;
         NewHeight = HARVESTED_HEIGHT;
       }
       if (NowHeight<0) {
         NewHeight = 0;
+        Income = NewIncome
       }
 
       // DoneComputing barrier:

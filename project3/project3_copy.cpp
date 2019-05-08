@@ -213,14 +213,22 @@ int main(){
 	omp_set_num_threads( 3 );	// same as # of sections
 	#pragma omp parallel sections shared(NowHeight,NowNumDeer,NowYear,NowMonth,Income)
 	{
-		#pragma omp section
-		{ GrainDeer( );}
+    #pragma omp section
+		{
+
+			GrainDeer( );
+
+		}
 
 		#pragma omp section
-		{ Grain( );}
+		{
+      Grain();
+		}
 
 		#pragma omp section
-		{Watcher( );}
+		{
+			Watcher();
+		}
 	}       // implied barrier -- all functions must return in order
 					// to allow any of them to get past here
 	return 0;
