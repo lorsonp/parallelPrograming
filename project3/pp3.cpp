@@ -86,6 +86,7 @@ void Grain()
   while( NowYear < 2025 ){
       // Grain( );
       float ang = (  30.*(float)NowMonth + 15.  ) * ( M_PI / 180. );
+      printf("%f \n",ang);
       float temp = AVG_TEMP - AMP_TEMP * cos( ang );
       unsigned int seed = 0;
 
@@ -138,7 +139,7 @@ void Watcher()
       fprintf(f,"%d  %d  %f  %f  %f  %d  %f \n", NowYear, NowMonth, NowTemp, NowPrecip, NowHeight, NowNumDeer, Income);
       NowMonth += 1;
       printf("%d \n",NowMonth);
-      if (NowMonth=12) {
+      if (NowMonth==12) {
         printf("here\n");
         NowYear+=1;
         NowMonth = 0;
