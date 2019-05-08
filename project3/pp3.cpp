@@ -101,7 +101,7 @@ void Grain()
       }
       if (NowHeight<0) {
         NewHeight = 0;
-        Income = NewIncome
+        Income = NewIncome;
       }
 
       // DoneComputing barrier:
