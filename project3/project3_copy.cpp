@@ -127,7 +127,7 @@ int main(){
 	NowHeight =  1.;
 
 	omp_set_num_threads( 3 );	// same as # of sections
-	#pragma omp parallel sections
+	#pragma omp parallel sections shared(NowHeight,NowNumDeer,NowYear,NowMonth,Income)
 	{
 		#pragma omp section
 		{
