@@ -106,7 +106,7 @@ void Grain()
         Income += (NowHeight - HARVESTED_HEIGHT)*COST_OF_GRAIN_PER_INCH;
         NewHeight = HARVESTED_HEIGHT;
       }
-      if (NewHeight>=0) {
+      if (NewHeight<=0) {
         NewHeight = 0;
       }
 
