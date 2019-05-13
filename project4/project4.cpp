@@ -116,7 +116,7 @@ f3 = fopen("project4.nonsimd.Mult.txt","a");
 f4 = fopen("project4.nonsimd.sumMult.txt","a");
 
 
-        double minMilliSecs = 0.;
+        double minMilliSecs = 10000000.;
 
         for( int t = 0; t < NUMTRIES; t++ )
         {
@@ -130,13 +130,13 @@ f4 = fopen("project4.nonsimd.sumMult.txt","a");
 
                 double time1 = omp_get_wtime( );
                 double milliSecs = (time1-time0)*1000.;
-                if( milliSecs > minMilliSecs )
+                if( milliSecs < minMilliSecs )
                         minMilliSecs = milliSecs;
         }
         printf( "Peak Performance = %8.2lf milliSecs\n", minMilliSecs );
         fprintf(f3,"%f \n", minMilliSecs);
 
-        double minMilliSecs = 0.;
+        minMilliSecs = 10000000.;
 
         for( int t = 0; t < NUMTRIES; t++ )
         {
@@ -152,13 +152,13 @@ f4 = fopen("project4.nonsimd.sumMult.txt","a");
 
                 double time1 = omp_get_wtime( );
                 double milliSecs = (time1-time0)*1000.;
-                if( milliSecs > minMilliSecs )
+                if( milliSecs < minMilliSecs )
                         minMilliSecs = milliSecs;
         }
         printf( "Peak Performance = %8.2lf milliSecs\n", minMilliSecs );
         fprintf(f4,"%f \n", minMilliSecs);
 
-        double minMilliSecs = 0.;
+        minMilliSecs = 10000000.;
 
         for( int t = 0; t < NUMTRIES; t++ )
         {
@@ -168,13 +168,13 @@ f4 = fopen("project4.nonsimd.sumMult.txt","a");
 
                 double time1 = omp_get_wtime( );
                 double milliSecs = (time1-time0)*1000.;
-                if( milliSecs > minMilliSecs )
+                if( milliSecs < minMilliSecs )
                         minMilliSecs = milliSecs;
         }
         printf( "Peak Performance = %8.2lf milliSecs\n", minMilliSecs );
         fprintf(f1,"%f \n", minMilliSecs);
 
-        double minMilliSecs = 0.;
+        minMilliSecs = 10000000.;
 
         for( int t = 0; t < NUMTRIES; t++ )
         {
@@ -184,7 +184,7 @@ f4 = fopen("project4.nonsimd.sumMult.txt","a");
 
                 double time1 = omp_get_wtime( );
                 double milliSecs = (time1-time0)*1000.;
-                if( milliSecs > minMilliSecs )
+                if( milliSecs < minMilliSecs )
                         minMilliSecs = milliSecs;
         }
         printf( "Peak Performance = %8.2lf milliSecs\n", minMilliSecs );
