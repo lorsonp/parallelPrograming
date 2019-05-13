@@ -142,12 +142,6 @@ f4 = fopen("project4.nonsimd.sumMult.txt","a");
     {
             double time0 = omp_get_wtime( );
 
-            for( int i = 0; i < ARRAYSIZE; i++ )
-            {
-                    C[i] = A[i] * B[i];
-
-            }
-
             NonSimdMulSum( A, B, ARRAYSIZE );
 
             double time1 = omp_get_wtime( );

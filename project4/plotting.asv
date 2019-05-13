@@ -1,0 +1,16 @@
+%% Plotting for project 3
+% Paige Lorson
+% Parallel Programming
+
+close all
+clear
+clc
+
+%% Import data
+addpath('C:\Users\Paige\Documents\MATLAB\myFunctions')
+data1 = importdata('project4.simd.Mult.txt',' ');
+data2 = importdata('project4.simd.sumMult.txt',' ');
+data3 = importdata('project4.nonsimd.Mult.txt',' ');
+data4 = importdata('project4.nonsimd.sumMult.txt',' ');
+
+S_s
