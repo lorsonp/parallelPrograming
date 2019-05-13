@@ -188,7 +188,7 @@ f4 = fopen("project4.nonsimd.sumMult.txt","a");
                     minMilliSecs = milliSecs;
     }
     printf( "Peak Performance = %8.2lf milliSecs\n", minMilliSecs );
-    fprintf(f1,"%f \n", minMilliSecs);
+    fprintf(f2,"%f \n", minMilliSecs);
 
     return 0;
 }
