@@ -9,6 +9,10 @@
 #define ARRAYSIZE       1000000	// you decide
 #endif
 
+#ifndef NUMTRIES
+#define NUMTRIES       10	// you decide
+#endif
+
 float *A = new float [ARRAYSIZE];
 float *B = new float [ARRAYSIZE];
 float *C = new float [ARRAYSIZE];
