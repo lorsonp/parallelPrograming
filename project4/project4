@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+for k in {1000,5000,10000,50000,100000,500000,1000000}
+do
+
+  echo $k 
+  g++  -DARRAYSIZE=$k -o proj project4.cpp -lm -fopenmp
+  ./proj
+
+done
