@@ -5,7 +5,7 @@
 #include "simd.p4.h"
 
 
-#ifndef          1
+#ifndef ARRAYSIZE
 #define ARRAYSIZE       1000000	// you decide
 #endif
 
