@@ -144,7 +144,7 @@ f4 = fopen("project4.nonsimd.sumMult.txt","a");
 
                 }
 
-                NonSimdMulSum( float *A, float *B, int ARRAYSIZE )
+                NonSimdMulSum( float *A, float *B, int ARRAYSIZE );
 
                 double time1 = omp_get_wtime( );
                 double milliSecs = (time1-time0)*1000.;
@@ -160,7 +160,7 @@ f4 = fopen("project4.nonsimd.sumMult.txt","a");
         {
                 double time0 = omp_get_wtime( );
 
-                SimdMul( float *A, float *B,   float *C,   int ARRAYSIZE )
+                SimdMul( float *A, float *B,   float *C,   int ARRAYSIZE );
 
                 double time1 = omp_get_wtime( );
                 double milliSecs = (time1-time0)*1000.;
@@ -176,7 +176,7 @@ f4 = fopen("project4.nonsimd.sumMult.txt","a");
         {
                 double time0 = omp_get_wtime( );
 
-                SimdMulSum( float *B, float *B, int ARRAYSIZE )
+                SimdMulSum( float *B, float *B, int ARRAYSIZE );
 
                 double time1 = omp_get_wtime( );
                 double milliSecs = (time1-time0)*1000.;
