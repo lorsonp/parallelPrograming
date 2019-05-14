@@ -7,5 +7,7 @@ do
   echo $k
   g++  -DARRAYSIZE=$k -o proj project4.cpp -lm -fopenmp
   ./proj
+  g++  -DARRAYSIZE=$k -o proj project4.simd.cpp -lm -fopenmp
+  ./proj
 
 done
