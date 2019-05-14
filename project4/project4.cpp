@@ -116,7 +116,7 @@ f3 = fopen("project4.nonsimd.Mult.txt","a");
 f4 = fopen("project4.nonsimd.sumMult.txt","a");
 
 
-    double minMilliSecs = 10000000.;
+    double maxPerformance = 0.;
 
     for( int t = 0; t < NUMTRIES; t++ )
     {
@@ -129,28 +129,36 @@ f4 = fopen("project4.nonsimd.sumMult.txt","a");
             }
 
             double time1 = omp_get_wtime( );
-            double milliSecs = (time1-time0)*1000000.;
-            if( milliSecs < minMilliSecs )
-                    minMilliSecs = milliSecs;
-    }
-    printf( "Peak Performance = %8.2lf milliSecs\n", minMilliSecs );
-    fprintf(f3,"%f \n", minMilliSecs);
+						double megaCalcs = (double)ARRAYSIZE / ( time1 - time0 ) * 1000000.;
+						if( megaCalcs > maxPerformance )
+							maxPerformance = megaCalcs;
 
-    minMilliSecs = 10000000.;
+            // double milliSecs = (time1-time0)*1000.;
+            // if( milliSecs < minMilliSecs )
+            //         minMilliSecs = milliSecs;
+    }
+
+    fprintf(f3,"%f \n", maxPerformance);
+
+		maxPerformance = 0.;
 
     for( int t = 0; t < NUMTRIES; t++ )
     {
             double time0 = omp_get_wtime( );
 
             NonSimdMulSum( A, B, ARRAYSIZE );
+						
+						double time1 = omp_get_wtime( );
+						double megaCalcs = (double)ARRAYSIZE / ( time1 - time0 ) * 1000000.;
+						if( megaCalcs > maxPerformance )
+							maxPerformance = megaCalcs;
 
-            double time1 = omp_get_wtime( );
-            double milliSecs = (time1-time0)*1000.;
-            if( milliSecs < minMilliSecs )
-                    minMilliSecs = milliSecs;
+            // double milliSecs = (time1-time0)*1000.;
+            // if( milliSecs < minMilliSecs )
+            //         minMilliSecs = milliSecs;
     }
-    printf( "Peak Performance = %8.2lf milliSecs\n", minMilliSecs );
-    fprintf(f4,"%f \n", minMilliSecs);
+
+    fprintf(f3,"%f \n", maxPerformance);
 
     return 0;
 }
