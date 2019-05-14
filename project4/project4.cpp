@@ -10,7 +10,7 @@
 #endif
 
 #ifndef NUMTRIES
-#define NUMTRIES       10	// you decide
+#define NUMTRIES       20	// you decide
 #endif
 
 float *A = new float [ARRAYSIZE];
