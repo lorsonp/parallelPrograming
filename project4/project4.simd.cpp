@@ -126,7 +126,7 @@ f4 = fopen("project4.nonsimd.sumMult.txt","a");
 
             double time1 = omp_get_wtime( );
 
-						double megaCalcs = (double)ARRAYSIZE / ( time1 - time0 ) * 1000000.;
+						double megaCalcs = (double)ARRAYSIZE / ( time1 - time0 ) / 1000000.;
 						if( megaCalcs > maxPerformance )
 							maxPerformance = megaCalcs;
 
@@ -135,7 +135,7 @@ f4 = fopen("project4.nonsimd.sumMult.txt","a");
             //         minMilliSecs = milliSecs;
     }
 
-    fprintf(f3,"%f \n", maxPerformance);
+    fprintf(f1,"%f \n", maxPerformance);
 
     maxPerformance = 0.;
 
@@ -147,7 +147,7 @@ f4 = fopen("project4.nonsimd.sumMult.txt","a");
 
             double time1 = omp_get_wtime( );
 
-						double megaCalcs = (double)ARRAYSIZE / ( time1 - time0 ) * 1000000.;
+						double megaCalcs = (double)ARRAYSIZE / ( time1 - time0 ) / 1000000.;
 						if( megaCalcs > maxPerformance )
 							maxPerformance = megaCalcs;
 
@@ -156,7 +156,7 @@ f4 = fopen("project4.nonsimd.sumMult.txt","a");
             //         minMilliSecs = milliSecs;
     }
 
-    fprintf(f3,"%f \n", maxPerformance);
+    fprintf(f2,"%f \n", maxPerformance);
 
     return 0;
 }
