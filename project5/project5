@@ -8,7 +8,7 @@ do
 
   echo $k
 
-  g++ -DNUM_ELEMENTS=$k -DLOCAL_SIZE=$i -o first first.cpp /scratch/Paige/parallelPrograming/project5/libOpenCL.so -lm -fopenmp
+  g++ -DNUM_ELEMENTS=$k -DLOCAL_SIZE=$i -lOpenCL -o first first.cpp /scratch/Paige/parallelPrograming/project5/libOpenCL.so -lm -fopenmp
 
 done
 done
