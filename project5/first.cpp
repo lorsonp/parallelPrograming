@@ -87,6 +87,7 @@ main( int argc, char *argv[ ] )
 	for( int i = 0; i < NUM_ELEMENTS; i++ )
 	{
 		hA[i] = hB[i] = (float) sqrt(  (double)i  );
+						// hA[i] = hB[i] = hC[i] = (float) sqrt(  (double)i  );
 	}
 
 	size_t dataSize = NUM_ELEMENTS * sizeof(float);
