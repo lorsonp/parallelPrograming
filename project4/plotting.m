@@ -1,4 +1,4 @@
-%% Plotting for project 3
+%% Plotting for project 4
 % Paige Lorson
 % Parallel Programming
 
