@@ -44,7 +44,7 @@ main( int argc, char *argv[ ] )
 	// see if we can even open the opencl kernel program
 	// (no point going on if we can't):
 	FILE *f;
-	f = fopen("part3.txt","a");
+	f = fopen("part1.txt","a");
 
 	FILE *fp;
 #ifdef WIN32
@@ -182,7 +182,7 @@ main( int argc, char *argv[ ] )
 
 	// 9. create the kernel object:
 
-	cl_kernel kernel = clCreateKernel( program, "ArrayMultAddReduct", &status );
+	cl_kernel kernel = clCreateKernel( program, "ArrayMult", &status );
 	if( status != CL_SUCCESS )
 		fprintf( stderr, "clCreateKernel failed\n" );
 
@@ -200,13 +200,9 @@ main( int argc, char *argv[ ] )
 	if( status != CL_SUCCESS )
 		fprintf( stderr, "clSetKernelArg failed (2)\n" );
 
-	status = clSetKernelArg( kernel, 2, sizeof(float), NULL );
+	status = clSetKernelArg( kernel, 2, sizeof(cl_mem), &dC );
 	if( status != CL_SUCCESS )
 		fprintf( stderr, "clSetKernelArg failed (3)\n" );
-
-	status = clSetKernelArg( kernel, 3, sizeof(cl_mem), &dC );
-	if( status != CL_SUCCESS )
-		fprintf( stderr, "clSetKernelArg failed (4)\n" );
 
 								// status = clSetKernelArg( kernel, 3, sizeof(cl_mem), &dD );
 								// if( status != CL_SUCCESS )

@@ -44,7 +44,7 @@ main( int argc, char *argv[ ] )
 	// see if we can even open the opencl kernel program
 	// (no point going on if we can't):
 	FILE *f;
-	f = fopen("part3.txt","a");
+	f = fopen("part2.txt","a");
 
 	FILE *fp;
 #ifdef WIN32
@@ -81,15 +81,15 @@ main( int argc, char *argv[ ] )
 	float *hA = new float[ NUM_ELEMENTS ];
 	float *hB = new float[ NUM_ELEMENTS ];
 	float *hC = new float[ NUM_ELEMENTS ];
-						// float *hD = new float[ NUM_ELEMENTS ];
+						float *hD = new float[ NUM_ELEMENTS ];
 
 
 	// fill the host memory buffers:
 
 	for( int i = 0; i < NUM_ELEMENTS; i++ )
 	{
-		hA[i] = hB[i] = (float) sqrt(  (double)i  );
-						// hA[i] = hB[i] = hC[i] = (float) sqrt(  (double)i  );
+		// hA[i] = hB[i] = (float) sqrt(  (double)i  );
+						hA[i] = hB[i] = hC[i] = (float) sqrt(  (double)i  );
 	}
 
 	size_t dataSize = NUM_ELEMENTS * sizeof(float);
@@ -116,17 +116,17 @@ main( int argc, char *argv[ ] )
 	if( status != CL_SUCCESS )
 		fprintf( stderr, "clCreateBuffer failed (2)\n" );
 
-	cl_mem dC = clCreateBuffer( context, CL_MEM_WRITE_ONLY, dataSize, NULL, &status );
-	if( status != CL_SUCCESS )
-		fprintf( stderr, "clCreateBuffer failed (3)\n" );
+	// cl_mem dC = clCreateBuffer( context, CL_MEM_WRITE_ONLY, dataSize, NULL, &status );
+	// if( status != CL_SUCCESS )
+	// 	fprintf( stderr, "clCreateBuffer failed (3)\n" );
 
-							// cl_mem dC = clCreateBuffer( context, CL_MEM_READ_ONLY, dataSize, NULL, &status );
-							// if( status != CL_SUCCESS )
-							// 	fprintf( stderr, "clCreateBuffer failed (3)\n" );
-							//
-							// cl_mem dD = clCreateBuffer( context, CL_MEM_WRITE_ONLY, dataSize, NULL, &status );
-							// if( status != CL_SUCCESS )
-							// 	fprintf( stderr, "clCreateBuffer failed (4)\n" );
+							cl_mem dC = clCreateBuffer( context, CL_MEM_READ_ONLY, dataSize, NULL, &status );
+							if( status != CL_SUCCESS )
+								fprintf( stderr, "clCreateBuffer failed (3)\n" );
+
+							cl_mem dD = clCreateBuffer( context, CL_MEM_WRITE_ONLY, dataSize, NULL, &status );
+							if( status != CL_SUCCESS )
+								fprintf( stderr, "clCreateBuffer failed (4)\n" );
 
 	// 6. enqueue the 2 commands to write the data from the host buffers to the device buffers:
 
@@ -138,9 +138,9 @@ main( int argc, char *argv[ ] )
 	if( status != CL_SUCCESS )
 		fprintf( stderr, "clEnqueueWriteBuffer failed (2)\n" );
 
-							// status = clEnqueueWriteBuffer( cmdQueue, dC, CL_FALSE, 0, dataSize, hC, 0, NULL, NULL );
-							// if( status != CL_SUCCESS )
-							// 	fprintf( stderr, "clEnqueueWriteBuffer failed (2)\n" );
+							status = clEnqueueWriteBuffer( cmdQueue, dC, CL_FALSE, 0, dataSize, hC, 0, NULL, NULL );
+							if( status != CL_SUCCESS )
+								fprintf( stderr, "clEnqueueWriteBuffer failed (2)\n" );
 
 
 	Wait( cmdQueue );
@@ -182,13 +182,13 @@ main( int argc, char *argv[ ] )
 
 	// 9. create the kernel object:
 
-	cl_kernel kernel = clCreateKernel( program, "ArrayMultAddReduct", &status );
-	if( status != CL_SUCCESS )
-		fprintf( stderr, "clCreateKernel failed\n" );
+	// cl_kernel kernel = clCreateKernel( program, "ArrayMult", &status );
+	// if( status != CL_SUCCESS )
+	// 	fprintf( stderr, "clCreateKernel failed\n" );
 
-								// cl_kernel kernel = clCreateKernel( program, "ArrayMultAdd", &status );
-								// if( status != CL_SUCCESS )
-								// 	fprintf( stderr, "clCreateKernel failed\n" );
+								cl_kernel kernel = clCreateKernel( program, "ArrayMultAdd", &status );
+								if( status != CL_SUCCESS )
+									fprintf( stderr, "clCreateKernel failed\n" );
 
 	// 10. setup the arguments to the kernel object:
 
@@ -200,17 +200,13 @@ main( int argc, char *argv[ ] )
 	if( status != CL_SUCCESS )
 		fprintf( stderr, "clSetKernelArg failed (2)\n" );
 
-	status = clSetKernelArg( kernel, 2, sizeof(float), NULL );
+	status = clSetKernelArg( kernel, 2, sizeof(cl_mem), &dC );
 	if( status != CL_SUCCESS )
 		fprintf( stderr, "clSetKernelArg failed (3)\n" );
 
-	status = clSetKernelArg( kernel, 3, sizeof(cl_mem), &dC );
-	if( status != CL_SUCCESS )
-		fprintf( stderr, "clSetKernelArg failed (4)\n" );
-
-								// status = clSetKernelArg( kernel, 3, sizeof(cl_mem), &dD );
-								// if( status != CL_SUCCESS )
-								// 	fprintf( stderr, "clSetKernelArg failed (4)\n" );
+								status = clSetKernelArg( kernel, 3, sizeof(cl_mem), &dD );
+								if( status != CL_SUCCESS )
+									fprintf( stderr, "clSetKernelArg failed (4)\n" );
 
 	// 11. enqueue the kernel object for execution:
 
@@ -231,13 +227,13 @@ main( int argc, char *argv[ ] )
 
 	// 12. read the results buffer back from the device to the host:
 
-	status = clEnqueueReadBuffer( cmdQueue, dC, CL_TRUE, 0, dataSize, hC, 0, NULL, NULL );
-	if( status != CL_SUCCESS )
-			fprintf( stderr, "clEnqueueReadBuffer failed\n" );
+	// status = clEnqueueReadBuffer( cmdQueue, dC, CL_TRUE, 0, dataSize, hC, 0, NULL, NULL );
+	// if( status != CL_SUCCESS )
+	// 		fprintf( stderr, "clEnqueueReadBuffer failed\n" );
 
-							// status = clEnqueueReadBuffer( cmdQueue, dD, CL_TRUE, 0, dataSize, hD, 0, NULL, NULL );
-							// if( status != CL_SUCCESS )
-							// 		fprintf( stderr, "clEnqueueReadBuffer failed\n" );
+							status = clEnqueueReadBuffer( cmdQueue, dD, CL_TRUE, 0, dataSize, hD, 0, NULL, NULL );
+							if( status != CL_SUCCESS )
+									fprintf( stderr, "clEnqueueReadBuffer failed\n" );
 
 	// did it work?
 
@@ -303,6 +299,3 @@ Wait( cl_command_queue queue )
       if( status != CL_SUCCESS )
 	      fprintf( stderr, "Wait: clWaitForEvents failed\n" );
 };
-
-// , 32, 64, 128, 256, 512
-// ,5000,7500,10000,25000,50000,75000,100000,250000,500000,750000,1000000,2500000,5000000,7500000,10000000
