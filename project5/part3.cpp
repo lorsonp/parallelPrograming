@@ -80,7 +80,7 @@ main( int argc, char *argv[ ] )
 
 	float *hA = new float[ NUM_ELEMENTS ];
 	float *hB = new float[ NUM_ELEMENTS ];
-	float *hC = new float[ NUM_ELEMENTS ];
+	float *hC = new float[ NUM_WORK_GROUPS ];
 						// float *hD = new float[ NUM_ELEMENTS ];
 
 
@@ -93,7 +93,7 @@ main( int argc, char *argv[ ] )
 	}
 
 	size_t dataSize = NUM_ELEMENTS * sizeof(float);
-
+  size_t cSize = NUM_WORK_GROUPS * sizeof(float);
 	// 3. create an opencl context:
 
 	cl_context context = clCreateContext( NULL, 1, &device, NULL, NULL, &status );
@@ -116,7 +116,7 @@ main( int argc, char *argv[ ] )
 	if( status != CL_SUCCESS )
 		fprintf( stderr, "clCreateBuffer failed (2)\n" );
 
-	cl_mem dC = clCreateBuffer( context, CL_MEM_WRITE_ONLY, dataSize, NULL, &status );
+	cl_mem dC = clCreateBuffer( context, CL_MEM_WRITE_ONLY, cSize, NULL, &status );
 	if( status != CL_SUCCESS )
 		fprintf( stderr, "clCreateBuffer failed (3)\n" );
 
@@ -230,8 +230,9 @@ main( int argc, char *argv[ ] )
 	double time1 = omp_get_wtime( );
 
 	// 12. read the results buffer back from the device to the host:
-
-	status = clEnqueueReadBuffer( cmdQueue, dC, CL_TRUE, 0, dataSize, hC, 0, NULL, NULL );
+  // status = clEnqueueReadBuffer( cmdQueue, dC, CL_TRUE, 0, numWorkGroups*sizeof(float), hC,
+  // 0, NULL, NULL );
+	status = clEnqueueReadBuffer( cmdQueue, dC, CL_TRUE, 0, cSize, hC, 0, NULL, NULL );
 	if( status != CL_SUCCESS )
 			fprintf( stderr, "clEnqueueReadBuffer failed\n" );
 
@@ -253,7 +254,7 @@ main( int argc, char *argv[ ] )
 		}
 	}
 
-	fprintf(f, "%8d\t%4d\t%10d\t%10.3lf \n",NUM_ELEMENTS, LOCAL_SIZE, NUM_WORK_GROUPS, (double)NUM_ELEMENTS/(time1-time0)/1000000000. );
+	fprintf(f, "%8d\t%4d\t%10d\t%10.5lf \n",NUM_ELEMENTS, LOCAL_SIZE, NUM_WORK_GROUPS, (double)NUM_ELEMENTS/(time1-time0)/1000000000. );
 
 #ifdef WIN32
 	Sleep( 2000 );
