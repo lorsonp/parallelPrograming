@@ -227,6 +227,12 @@ main( int argc, char *argv[ ] )
 		fprintf( stderr, "clEnqueueNDRangeKernel failed: %d\n", status );
 
 	Wait( cmdQueue );
+
+  float sum = 0.;
+  for( int i = 0; i < numWorkgroups; i++ )
+  {
+  sum += hC[ i ];
+  }
 	double time1 = omp_get_wtime( );
 
 	// 12. read the results buffer back from the device to the host:
