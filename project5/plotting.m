@@ -20,9 +20,9 @@ LOCAL_SIZE{1} = unique(data{1}(:,2));
 LOCAL_SIZE{2} = unique(data{2}(:,2));
 LOCAL_SIZE{3} = unique(data{3}(:,2));
 
-NUM_WORK_GROUPS{1} = unique(data{1}(:,3));
-NUM_WORK_GROUPS{2} = unique(data{2}(:,3));
-NUM_WORK_GROUPS{3} = unique(data{3}(:,3));
+% NUM_WORK_GROUPS{1} = unique(data{1}(:,3));
+% NUM_WORK_GROUPS{2} = unique(data{2}(:,3));
+% NUM_WORK_GROUPS{3} = unique(data{3}(:,3));
 
 for i = 1:3
     L1 = length(NUM_ELEMENTS{i});
@@ -47,7 +47,7 @@ for i = 1:2
     end
     L2 = length(LOCAL_SIZE{i});
 
-    for k = 1:n2:floor(L2/n2)*n2
+    for k = 1:L2%n2:floor(L2/n2)*n2
         plot(NUM_ELEMENTS{i}(1:floor(L1/n2):end),PERFORMANCE{i}(1:floor(L1/n2):end,k),'Marker','o','LineStyle',LS,'LineWidth',3)
         hold on
     end
@@ -63,7 +63,7 @@ for i = 1:2
         LS = '-';
     end
     L1 = length(NUM_ELEMENTS{i});
-    for j = 1:n1:floor(L1/n1)*n1
+    for j = 1:L1%n1:floor(L1/n1)*n1
         plot(LOCAL_SIZE{i}(1:floor(L2/n2):end),PERFORMANCE{i}(j,1:floor(L2/n2):end),'Marker','o','LineStyle',LS,'LineWidth',3)
         hold on
     end
@@ -97,7 +97,7 @@ for i = 3
         LS = '-';
     end
     L1 = length(NUM_ELEMENTS{i});
-    for j = 1:n1:floor(L1/n1)*n1
+    for j = 1:L1%n1:floor(L1/n1)*n1
         plot(LOCAL_SIZE{i}(1:floor(L2/n2):end),PERFORMANCE{i}(j,1:floor(L2/n2):end),'Marker','o','LineStyle',LS,'LineWidth',3)
         hold on
     end
