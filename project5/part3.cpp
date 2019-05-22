@@ -229,7 +229,7 @@ main( int argc, char *argv[ ] )
 	Wait( cmdQueue );
 
   float sum = 0.;
-  for( int i = 0; i < numWorkgroups; i++ )
+  for( int i = 0; i < NUM_WORK_GROUPS; i++ )
   {
   sum += hC[ i ];
   }
