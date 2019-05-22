@@ -34,8 +34,8 @@ for i = 1:3
     end
 end
 
-
-
+n1 = 3;
+n2 = 4;
 fig1 = figure(1); 
 set(fig1,'units','normalized','outerposition',[0 0 0.75 1]);
 for i = 1:2
@@ -46,9 +46,9 @@ for i = 1:2
         LS = '-';
     end
     L2 = length(LOCAL_SIZE{i});
-    n = 2;
-    for k = 1:n:floor(L2/n)*n
-        semilogx(NUM_ELEMENTS{i}(:),PERFORMANCE{i}(:,k),'Marker','o','LineStyle',LS,'LineWidth',3)
+
+    for k = 1:n2:floor(L2/n2)*n2
+        plot(NUM_ELEMENTS{i}(1:floor(L1/n2):end),PERFORMANCE{i}(1:floor(L1/n2):end,k),'Marker','o','LineStyle',LS,'LineWidth',3)
         hold on
     end
 end
@@ -63,9 +63,42 @@ for i = 1:2
         LS = '-';
     end
     L1 = length(NUM_ELEMENTS{i});
-    n = 3;
-    for j = 1:n:floor(L1/n)*n
-        semilogx(LOCAL_SIZE{i}(:),PERFORMANCE{i}(j,:),'Marker','o','LineStyle',LS,'LineWidth',3)
+    for j = 1:n1:floor(L1/n1)*n1
+        plot(LOCAL_SIZE{i}(1:floor(L2/n2):end),PERFORMANCE{i}(j,1:floor(L2/n2):end),'Marker','o','LineStyle',LS,'LineWidth',3)
+        hold on
+    end
+end
+
+fig3 = figure(3); 
+set(fig3,'units','normalized','outerposition',[0 0 0.75 1]);
+
+for i = 3
+    if i == 1
+        LS = '--';
+    end
+    if i == 2
+        LS = '-';
+    end
+    L2 = length(LOCAL_SIZE{i});
+
+    for k = 1:L2
+        plot(NUM_ELEMENTS{i}(1:floor(L1/n2):end),PERFORMANCE{i}(1:floor(L1/n2):end,k),'Marker','o','LineStyle',LS,'LineWidth',3)
+        hold on
+    end
+end
+
+fig4 = figure(4); 
+set(fig4,'units','normalized','outerposition',[0 0 0.75 1]);
+for i = 3
+    if i == 1
+        LS = '--';
+    end
+    if i == 2
+        LS = '-';
+    end
+    L1 = length(NUM_ELEMENTS{i});
+    for j = 1:n1:floor(L1/n1)*n1
+        plot(LOCAL_SIZE{i}(1:floor(L2/n2):end),PERFORMANCE{i}(j,1:floor(L2/n2):end),'Marker','o','LineStyle',LS,'LineWidth',3)
         hold on
     end
 end
