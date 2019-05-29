@@ -41,10 +41,10 @@ int				LookAtTheBits( float );
 int
 main( int argc, char *argv[ ] )
 {
-	// see if we can even open the opencl kernel program
-	// (no point going on if we can't):
 	FILE *f;
 	f = fopen("part3.txt","a");
+	// see if we can even open the opencl kernel program
+	// (no point going on if we can't):
 
 	FILE *fp;
 #ifdef WIN32

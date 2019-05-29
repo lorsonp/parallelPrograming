@@ -1,0 +1,12 @@
+#!/bin/bash
+
+
+for k in {16,32,64}
+do
+for i in {16000,,32000,64000,128000,256000,512000}
+do
+  echo $k
+  g++ -DBLOCKSIZE=$k -DNUMTRIALS=$i -o proj project6.cpp /scratch/Paige/parallelPrograming/project5/libOpenCL.so -lm -fopenmp
+  ./proj
+done
+done
