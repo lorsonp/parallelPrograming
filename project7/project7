@@ -1,0 +1,21 @@
+#!/bin/bash
+
+for i in {1..8..1}
+do
+
+	echo $k $i
+	g++ -DNUMT=$i -o proj p7OMP.cpp -lm -fopenmp
+	./proj
+
+done
+
+g++  -o proj p7SIMD.cpp -lm -fopenmp
+./proj
+
+for k in {16,32,64}
+do
+
+	/usr/local/apps/cuda/cuda-9.2/bin/nvcc -DBLOCKSIZE=$k -o proj p7CUDA.cu
+	./proj
+
+done
