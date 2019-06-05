@@ -1,12 +1,13 @@
 #!/bin/bash
-
+CUDA_PATH	=	/usr/local/apps/cuda/cuda-9.2
+CUDA_BIN_PATH	=	$(CUDA_PATH)/bin
+CUDA_NVCC	=	$(CUDA_BIN_PATH)/nvcc
 
 for k in {16,32,64}
 do
 for i in {16000,32000,64000,128000,256000,512000}
 do
-  echo $k
-  g++ -DBLOCKSIZE=$k -DNUMTRIALS=$i -o proj project6.cu -lm -fopenmp
-  ./proj
+	/usr/local/apps/cuda/cuda-9.2/bin/nvcc -DBLOCKSIZE=$k -DNUMTRIALS=$i -o proj project6.cu 
+	./proj
 done
 done

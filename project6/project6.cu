@@ -77,11 +77,14 @@ TimeOfDaySeed( )
 
 __global__ void LaserMonteCarloNoIf( float *XCS, float *YCS, float *RS, float *T )
 {
-  // unsigned int numItems = blockDim.x;
-	// unsigned int tnum = threadIdx.x;
-	// unsigned int wgNum = blockIdx.x;
-	unsigned int gid = blockIdx.x*blockDim.x + threadIdx.x;
-    // solve for the intersection using the quadratic formula:
+    __shared__ float prods[BLOCKSIZE];
+	
+    unsigned int numItems = blockDim.x;
+    unsigned int tnum = threadIdx.x;
+    unsigned int wgNum = blockIdx.x;
+    unsigned int gid = blockIdx.x*blockDim.x + threadIdx.x;
+ 
+   // solve for the intersection using the quadratic formula:
     float a = 2.;
     float b = -2.*( XCS[gid] + YCS[gid] );
     float c = XCS[gid]*XCS[gid] + YCS[gid]*YCS[gid] - RS[gid]*RS[gid];
@@ -127,12 +130,26 @@ __global__ void LaserMonteCarloNoIf( float *XCS, float *YCS, float *RS, float *T
             float t = ( 0. - ycir ) / outy;
             if (t > 0)
           		{
-          			T[gid] = 1;
+          			prods[tnum] = 1;
           		}
             else
               {
-                T[gid] = 0;
+                prods[tnum] = 0;
               }
+
+	for (int offset = 1; offset < numItems; offset *= 2)
+	{
+		int mask = 2 * offset - 1;
+		__syncthreads();
+		if ((tnum & mask) == 0)
+		{
+			prods[tnum] += prods[tnum + offset];
+		}
+	}
+
+	__syncthreads();
+	if (tnum == 0)
+		T[wgNum] = prods[0];
 }
 
 
@@ -154,7 +171,7 @@ main( int argc, char *argv[ ] )
   float * hXCS = new float [ NUMTRIALS ];
   float * hYCS = new float [ NUMTRIALS ];
   float * hRS = new float [ NUMTRIALS ];
-  float * hT = new float [ NUMTRIALS ];
+  float * hT = new float [ NUMTRIALS/BLOCKSIZE ];
 
   for( int n = 0; n < NUMTRIALS; n++ )
   {
@@ -170,9 +187,9 @@ main( int argc, char *argv[ ] )
   dim3 dimsXCS( NUMTRIALS, 1, 1 );
   dim3 dimsYCS( NUMTRIALS, 1, 1 );
   dim3 dimsRS( NUMTRIALS, 1, 1 );
-  dim3 dimsT( NUMTRIALS, 1, 1 );
+  dim3 dimsT( NUMTRIALS/BLOCKSIZE, 1, 1 );
 
-  //__shared__ float prods[SIZE/BLOCKSIZE];
+  // __shared__ float prods[NUMTRIALS/BLOCKSIZE];
 
 
   cudaError_t status;
@@ -182,7 +199,7 @@ main( int argc, char *argv[ ] )
   checkCudaErrors( status );
   status = cudaMalloc( reinterpret_cast<void **>(&dRS), NUMTRIALS*sizeof(float) );
   checkCudaErrors( status );
-  status = cudaMalloc( reinterpret_cast<void **>(&dT), NUMTRIALS*sizeof(float) );
+  status = cudaMalloc( reinterpret_cast<void **>(&dT), NUMTRIALS/BLOCKSIZE*sizeof(float) );
   checkCudaErrors( status );
 
 
@@ -224,6 +241,8 @@ main( int argc, char *argv[ ] )
             LaserMonteCarloNoIf<<< grid, threads >>>( dXCS, dYCS, dRS, dT );
         // }
 
+	
+
   // record the stop event:
 
   status = cudaEventRecord( stop, NULL );
@@ -233,19 +252,26 @@ main( int argc, char *argv[ ] )
 
   status = cudaEventSynchronize( stop );
     checkCudaErrors( status );
+  // sum hits
+  //  int hits;
+  //  for (int i = 0; i < NUMTRIALS; i++)
+  //  {
+  //	hits += hT[i];
+  //  }
+  //  double P = (double)hits/(float)NUMTRIALS;
+
 
   float msecTotal = 0.0f;
   status = cudaEventElapsedTime( &msecTotal, start, stop );
     checkCudaErrors( status );
 
   // compute and print the performance
-
+  
   double secondsTotal = 0.001 * (double)msecTotal;
   double megaTrialsPerSecond =   (float)NUMTRIALS / secondsTotal / 1000000.;
   // double megaMultsPerSecond = multsPerSecond / 1000000.;
-  fprintf( stderr, "Number of Trials = %10d, MegaTrials/Second = %10.2lf\n", NUMTRIALS, megaTrialsPerSecond );
-  fprintf(f,"%d  %d  %f  %f \n", NUMTRIALS, BLOCKSIZE, megaTrialsPerSecond, 1.0);
-
+  fprintf( stderr, "Number of Trials = %10d, Block Size = %10d, MegaTrials/Second = %10.2lf\n", NUMTRIALS, BLOCKSIZE, megaTrialsPerSecond );
+  fprintf(f,"%d  %d  %f  %f \n", NUMTRIALS, BLOCKSIZE, megaTrialsPerSecond, 1.0 );
   // copy result from the device to the host:
 
   status = cudaMemcpy( hT, dT, NUMTRIALS*sizeof(float), cudaMemcpyDeviceToHost );
