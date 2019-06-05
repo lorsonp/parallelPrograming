@@ -3,7 +3,7 @@
 
 for k in {16,32,64}
 do
-for i in {16000,,32000,64000,128000,256000,512000}
+for i in {16000,32000,64000,128000,256000,512000}
 do
   echo $k
   g++ -DBLOCKSIZE=$k -DNUMTRIALS=$i -o proj project6.cu -lm -fopenmp

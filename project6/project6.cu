@@ -15,7 +15,7 @@
 #include "helper_cuda.h"
 
 
-#ifndef
+#ifndef BLOCKSIZE
 #define BLOCKSIZE 32 // number of threads per block
 #endif
 
@@ -23,7 +23,7 @@
 //   #define SIZE 1*1024*1024 // array size
 // #endif
 
-#ifndef
+#ifndef NUMTRIALS
 #define NUMTRIALS 100 // to make the timing more accurate
 #endif
 
@@ -31,9 +31,17 @@
 #define NUMTRIES	10
 #endif
 
-#ifndef
+#ifndef TOLERANCE
 #define TOLERANCE 0.00001f // tolerance to relative error
 #endif
+
+// ranges for the random numbers:
+const float XCMIN =	 0.0;
+const float XCMAX =	 2.0;
+const float YCMIN =	 0.0;
+const float YCMAX =	 2.0;
+const float RMIN  =	 0.5;
+const float RMAX  =	 2.0;
 
 float
 Ranf( float low, float high )
@@ -69,9 +77,9 @@ TimeOfDaySeed( )
 
 __global__ void LaserMonteCarloNoIf( float *XCS, float *YCS, float *RS, float *T )
 {
-  unsigned int numItems = blockDim.x;
-	unsigned int tnum = threadIdx.x;
-	unsigned int wgNum = blockIdx.x;
+  // unsigned int numItems = blockDim.x;
+	// unsigned int tnum = threadIdx.x;
+	// unsigned int wgNum = blockIdx.x;
 	unsigned int gid = blockIdx.x*blockDim.x + threadIdx.x;
     // solve for the intersection using the quadratic formula:
     float a = 2.;
@@ -88,6 +96,7 @@ __global__ void LaserMonteCarloNoIf( float *XCS, float *YCS, float *RS, float *T
         float t2 = (-b - d ) / ( 2.*a );	// time to intersect the circle
         float tmin = t1 < t2 ? t1 : t2;		// only care about the first intersection
 
+
             //IF tmin is less than 0., then the circle completely engulfs the laser pointer.
             //(Case B) Continue on to the next trial in the for-loop.
 
@@ -96,14 +105,14 @@ __global__ void LaserMonteCarloNoIf( float *XCS, float *YCS, float *RS, float *T
             float ycir = tmin;
 
             // get the unitized normal vector at the point of intersection:
-            float nx = xcs[gid]ir - xcs[gid];
-            float ny = ycir - ycs[gid];
+            float nx = xcir - XCS[gid];
+            float ny = ycir - YCS[gid];
             float n = sqrt( nx*nx + ny*ny );
             nx /= n;	// unit vector
             ny /= n;	// unit vector
 
             // get the unitized incoming vector:
-            float inx = xcs[gid]ir - 0.;
+            float inx = xcir - 0.;
             float iny = ycir - 0.;
             float in = sqrt( inx*inx + iny*iny );
             inx /= in;	// unit vector
@@ -111,7 +120,7 @@ __global__ void LaserMonteCarloNoIf( float *XCS, float *YCS, float *RS, float *T
 
             // get the outgoing (bounced) vector:
             float dot = inx*nx + iny*ny;
-            float outx = inx - 2.*nx*dot;	// angle of reflection = angle of incidence`
+            // float outx = inx - 2.*nx*dot;	// angle of reflection = angle of incidence`
             float outy = iny - 2.*ny*dot;	// angle of reflection = angle of incidence`
 
             // find out if it hits the infinite plate:
@@ -126,10 +135,8 @@ __global__ void LaserMonteCarloNoIf( float *XCS, float *YCS, float *RS, float *T
               }
 }
 
-	__syncthreads();
-	if (tnum == 0)
-		C[wgNum] = prods[0];
-}
+
+
 
 
 // main program:
@@ -213,8 +220,8 @@ main( int argc, char *argv[ ] )
         // execute the kernel:
 
         // for( int t = 0; t < NUMTRIES; t++)
-        {
-            LaserMonteCarlo<<< grid, threads >>>( dXCS, dYCS, dRS, dT );
+        // {
+            LaserMonteCarloNoIf<<< grid, threads >>>( dXCS, dYCS, dRS, dT );
         // }
 
   // record the stop event:
@@ -234,10 +241,10 @@ main( int argc, char *argv[ ] )
   // compute and print the performance
 
   double secondsTotal = 0.001 * (double)msecTotal;
-  double megaTrialsPerSecond =  (float)NUMTRIALS * (float)NUMTRIALS / secondsTotal / 1000000.;
+  double megaTrialsPerSecond =   (float)NUMTRIALS / secondsTotal / 1000000.;
   // double megaMultsPerSecond = multsPerSecond / 1000000.;
-  fprintf( stderr, "Number of Trials = %10d, MegaTrials/Second = %10.2lf\n", NUMTRIALS, megaMultsPerSecond );
-  fprintf(f,"%d  %d  %f  %f \n", NUMTRIALS, BLOCKSIZE, megaTrialsPerSecond, currentProb);
+  fprintf( stderr, "Number of Trials = %10d, MegaTrials/Second = %10.2lf\n", NUMTRIALS, megaTrialsPerSecond );
+  fprintf(f,"%d  %d  %f  %f \n", NUMTRIALS, BLOCKSIZE, megaTrialsPerSecond, 1.0);
 
   // copy result from the device to the host:
 
