@@ -1,15 +1,9 @@
-#include <omp.h>
-#include <stdio.h>
-#include <math.h>
-#include <iostream>
 #include "simd.p4.h"
 
-
-#ifndef NUMTRIES
-#define NUMTRIES       5	// you decide
-#endif
-
-using namespace std;
+// July 13, 2017: mjb -- changed rbx register to r8
+// The convention is that rbx needs to be saved by the callee (i.e., pushed and popped),
+// 	but rcx, rdx, r8, and r9 do not
+// This fixed the bug that showed up in cs 475/575 project #5 in SQ 2017
 
 
 void
@@ -104,66 +98,4 @@ NonSimdMulSum( float *a, float *b, int len )
 	}
 
 	return sum[0];
-}
-
-
-
-int
-main( )
-{
-  #ifndef _OPENMP
-          fprintf( stderr, "OpenMP is not supported here -- sorry.\n" );
-          return 1;
-  #endif
-
-
-
-  FILE *fp = fopen( "signal.txt", "r" );
-  if( fp == NULL )
-  {
-  	fprintf( stderr, "Cannot open file 'signal.txt'\n" );
-  	exit( 1 );
-  }
-  int Size;
-  fscanf( fp, "%d", &Size );
-  float *Array = new float[ 2*Size ];
-  float *Sums  = new float[ 1*Size ];
-  for( int i = 0; i < Size; i++ )
-  {
-  	fscanf( fp, "%f", &Array[i] );
-  	Array[i+Size] = Array[i];		// duplicate the array
-  }
-  fclose( fp );
-
-
-
-  double maxPerformance = 0.;
-
-  for( int t = 0; t < NUMTRIES; t++ )
-  {
-  double time0 = omp_get_wtime( );
-  for( int shift = 0; shift < Size; shift++ )
-  {
-      Sums[shift] = SimdMulSum( &Array[0], &Array[0+shift], Size );
-  }
-  double time1 = omp_get_wtime( );
-
-  double megaCalcs = Size / ( time1 - time0 ) / 1000000.;
-  if( megaCalcs > maxPerformance )
-    maxPerformance = megaCalcs;
-  }
-
-  FILE *f;
-  // f = fopen("SumsVShift.txt","a");
-	f = fopen("p7SIMD.txt","a");
-  // fprintf(f,"\n");
-  for (size_t i = 1; i < 512; i++)
-  {
-  fprintf(f,"%f  %d \n", Sums[i], i);
-  }
-
-  // FILE *f;
-  fprintf(f,"%d %f \n", 1, maxPerformance);
-
-return 0;
 }

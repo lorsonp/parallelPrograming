@@ -70,20 +70,20 @@ main (int argc, char const *argv[])
                   maxMegaCalcs = megaCalcs;
    }
 
-    FILE *f;
-    f = fopen("SumsVShift.txt","a");
+   FILE *f1;
+   f1 = fopen("p7OMP.txt","a");
+    // FILE *f;
+    // f = fopen("SumsVShift.txt","a");
     if (NUMT == 1)
     {
-      fprintf(f,"\n")
+      // fprintf(f1,"\n");
       for (size_t i = 1; i < 512; i++)
       {
-      fprintf(f,"%f  %d \n", Sums[i], i)
+      fprintf(f1,"%f  %d \n", Sums[i], i);
       }
     }
 
-    FILE *f;
-    f = fopen("p7OMP.txt","a");
-    fprintf(f,"%d  %d  %f  %f \n", NUMTRIALS, NUMT, maxPerformance, currentProb);
+    fprintf(f1,"%d  %f \n", NUMT, maxMegaCalcs);
 
 return 0;
 }

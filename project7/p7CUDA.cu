@@ -13,18 +13,18 @@
 #endif
 
 
-__global__ void AutoCorrelate( global const float *dArray, global float *dSums )
+__global__ void AutoCorrelate( float *Array, float *Sums )
 {
-	int Size = get_global_size( 0 );	// the dArray size is actually twice this big
-        int gid  = get_global_id( 0 );
+	// int Size = get_global_size( 0 );
+	unsigned int gid = blockIdx.x*blockDim.x + threadIdx.x;
 	int shift = gid;
-
+	int Size = 32769;
 	float sum = 0.;
 	for( int i = 0; i < Size; i++ )
 	{
-		sum += dArray[i] * dArray[i + shift];
+		sum += Array[i] * Array[i + shift];
 	}
-	dSums[shift] = sum;
+	Sums[shift] = sum;
 }
 
 
@@ -55,21 +55,24 @@ main( int argc, char *argv[ ] )
 
   float *hArray = new float[ 2*Size ];
   float *hSums  = new float[ 1*Size ];
+	// float *hSize  = new float[ 1 ];
+
 
   for( int n = 0; n < Size; n++ )
   {
     hArray[n] = Array[n];
     hArray[n+Size] = Array[n];
   }
-
+	// hSize = Size
 
     // allocate device memory:
 
 
-  float *dArray, *dSums;
+  float *dArray, *dSums; //, *dSize;
 
   dim3 dimsArray( 2*Size, 1, 1 );
   dim3 dimsSums ( 1*Size, 1, 1 );
+	// dim3 dimsSize ( 1, 1, 1 );
 
 
   cudaError_t status;
@@ -77,6 +80,8 @@ main( int argc, char *argv[ ] )
   checkCudaErrors( status );
   status = cudaMalloc( reinterpret_cast<void **>(&dSums), 1*Size*sizeof(float) );
   checkCudaErrors( status );
+	// status = cudaMalloc( reinterpret_cast<void **>(&dSize), 1*sizeof(float) );
+	// checkCudaErrors( status );
 
 
     // copy host memory to the device:
@@ -136,24 +141,24 @@ main( int argc, char *argv[ ] )
 
   // copy result from the device to the host:
 
-  status = cudaMemcpy( hSums, dSums, NUMTRIALS*sizeof(float), cudaMemcpyDeviceToHost );
+  status = cudaMemcpy( hSums, dSums, Size*sizeof(float), cudaMemcpyDeviceToHost );
     checkCudaErrors( status );
 
 
     FILE *f;
-    f = fopen("SumsVShift.txt","a");
-    if (NUMT == 1)
+    // f = fopen("SumsVShift.txt","a");
+		f = fopen("p7CUDA.txt","a");
+    if (BLOCKSIZE == 1)
     {
-      fprintf(f,"\n")
+      // fprintf(f,"\n");
       for (size_t i = 1; i < 512; i++)
       {
-      fprintf(f,"%f  %d \n", hSums[i], i)
+      fprintf(f,"%f  %d \n", hSums[i], i);
       }
     }
 
-    FILE *f;
-    f = fopen("p7OMP.txt","a");
-    fprintf(f,"%d  %d  %f  %f \n", BLOCKSIZE, megaCalcssPerSecond);
+    // FILE *f1;
+    fprintf(f,"%d  %f \n", BLOCKSIZE, megaCalcssPerSecond);
 
 
     delete [ ] hArray;
