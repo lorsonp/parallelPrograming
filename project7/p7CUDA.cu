@@ -148,7 +148,7 @@ main( int argc, char *argv[ ] )
     FILE *f;
     // f = fopen("SumsVShift.txt","a");
 		f = fopen("p7CUDA.txt","a");
-    if (BLOCKSIZE == 1)
+    if (BLOCKSIZE == 16)
     {
       // fprintf(f,"\n");
       for (size_t i = 1; i < 512; i++)
